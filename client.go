@@ -1,11 +1,9 @@
 package mediawiki
 
 import (
-	"bytes"
 	"context"
 	"fmt"
 	"io"
-	"mime/multipart"
 	"net/http"
 	"net/http/cookiejar"
 	"net/http/httputil"
@@ -19,7 +17,7 @@ import (
 // If you modify this package, please change DefaultUserAgent.
 
 // DefaultUserAgent is the HTTP User-Agent used by default.
-const DefaultUserAgent = "go-mwclient (https://github.com/clockworksoul/mediawiki)"
+const DefaultUserAgent = "go-mediawiki (https://github.com/clockworksoul/mediawiki)"
 
 type Client struct {
 	Client *http.Client
@@ -163,79 +161,6 @@ func (w *Client) GetToken(ctx context.Context, token Token) (string, error) {
 	return ts, nil
 }
 
-func (w *Client) BotLogin(ctx context.Context, username, password string) (Response, error) {
-	token, err := w.GetToken(ctx, LoginToken)
-	if err != nil {
-		return Response{}, err
-	}
-
-	w.username = username
-	w.password = password
-	w.loginBot = true
-
-	v := Values{
-		"action":     "login",
-		"lgname":     username,
-		"lgpassword": password,
-		"lgtoken":    token,
-	}
-
-	r, err := w.Post(ctx, v)
-	if err != nil {
-		return r, fmt.Errorf("error parsing response: %w", err)
-	}
-
-	if e := r.Error; e != nil {
-		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
-	} else if r.BotLogin == nil {
-		return r, fmt.Errorf("unexpected error in login")
-	} else if r.BotLogin.Result != "Success" {
-		return r, fmt.Errorf("login %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.Messagecode, r.ClientLogin.Message)
-	}
-
-	w.lastLoginTime = time.Now()
-
-	return r, nil
-}
-
-func (w *Client) ClientLogin(ctx context.Context, username, password string) (Response, error) {
-	token, err := w.GetToken(ctx, LoginToken)
-	if err != nil {
-		return Response{}, err
-	}
-
-	w.username = username
-	w.password = password
-	w.loginBot = false
-
-	loginReturnUrl := fmt.Sprintf("%s://%s\n", w.apiURL.Scheme, w.apiURL.Host)
-
-	v := Values{
-		"action":         "clientlogin",
-		"username":       username,
-		"password":       password,
-		"loginreturnurl": loginReturnUrl,
-		"logintoken":     token,
-	}
-
-	r, err := w.Post(ctx, v)
-	if err != nil {
-		return r, fmt.Errorf("error parsing response: %w", err)
-	}
-
-	if e := r.Error; e != nil {
-		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
-	} else if r.ClientLogin == nil {
-		return r, fmt.Errorf("unexpected error in login")
-	} else if r.ClientLogin.Status != "PASS" {
-		return r, fmt.Errorf("login %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.Messagecode, r.ClientLogin.Message)
-	}
-
-	w.lastLoginTime = time.Now()
-
-	return r, nil
-}
-
 func (w *Client) Post(ctx context.Context, v Values) (Response, error) {
 	v["format"] = "json"
 
@@ -278,153 +203,6 @@ func (w *Client) Post(ctx context.Context, v Values) (Response, error) {
 	return r, nil
 }
 
-func (w *Client) Protect(ctx context.Context, title, reason string) (Response, error) {
-	if err := w.checkKeepAlive(ctx); err != nil {
-		return Response{}, err
-	}
-
-	token, err := w.GetToken(ctx, CSRFToken)
-	if err != nil {
-		return Response{}, err
-	}
-
-	// Specify parameters to send.
-	parameters := map[string]string{
-		"action":      "protect",
-		"title":       title,
-		"protections": "edit=sysop",
-		"reason":      reason,
-		"token":       token,
-	}
-
-	// Make the request.
-	r, err := w.Post(ctx, parameters)
-	if err != nil {
-		return r, fmt.Errorf("failed to post: %w", err)
-	}
-
-	if e := r.Error; e != nil {
-		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
-	}
-
-	return r, nil
-}
-
-func (w *Client) Upload(ctx context.Context, name string, file io.Reader, filename string) (Response, error) {
-	if err := w.checkKeepAlive(ctx); err != nil {
-		return Response{}, err
-	}
-
-	token, err := w.GetToken(ctx, CSRFToken)
-	if err != nil {
-		return Response{}, err
-	}
-
-	body := &bytes.Buffer{}
-	writer := multipart.NewWriter(body)
-
-	writer.WriteField("action", "upload")
-	writer.WriteField("filename", filename)
-	writer.WriteField("ignorewarnings", "true")
-	writer.WriteField("token", token)
-	writer.WriteField("format", "json")
-
-	part, _ := writer.CreateFormFile("file", filename)
-	io.Copy(part, file)
-	writer.Close()
-
-	req, err := http.NewRequestWithContext(ctx, "POST", w.apiURL.String(), body)
-	if err != nil {
-		return Response{}, err
-	}
-
-	req.Header.Add("User-Agent", w.UserAgent)
-	req.Header.Add("Content-Type", writer.FormDataContentType())
-
-	if w.Debug != nil {
-		reqdump, err := httputil.DumpRequestOut(req, true)
-		if err != nil {
-			fmt.Fprintf(w.Debug, "Err dumping request: %v\n", err)
-		} else {
-			w.Debug.Write(reqdump)
-		}
-	}
-
-	resp, err := w.Client.Do(req)
-	if err != nil {
-		return Response{}, err
-	}
-
-	if w.Debug != nil {
-		respdump, err := httputil.DumpResponse(resp, true)
-		if err != nil {
-			fmt.Fprintf(w.Debug, "Err dumping response: %v\n", err)
-		} else {
-			w.Debug.Write(respdump)
-		}
-	}
-
-	if resp.StatusCode >= 400 {
-		return Response{}, fmt.Errorf(resp.Status)
-	}
-
-	r, err := ParseResponseReader(resp.Body)
-	if err != nil {
-		return r, err
-	}
-
-	if e := r.Error; e != nil {
-		if (e.Code == "backend-fail-alreadyexists" || e.Code == "fileexists-no-change") && !w.FailFileExists {
-			return r, nil
-		}
-
-		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
-	} else if r.Upload == nil {
-		return r, fmt.Errorf("unexpected error in upload")
-	} else if r.Upload.Result != "Success" && r.Upload.Result != "Warning" {
-		return r, fmt.Errorf("upload failure")
-	}
-
-	return r, nil
-}
-
-func (w *Client) Write(ctx context.Context, title, text, summary string) (Response, error) {
-	if err := w.checkKeepAlive(ctx); err != nil {
-		return Response{}, err
-	}
-
-	token, err := w.GetToken(ctx, CSRFToken)
-	if err != nil {
-		return Response{}, err
-	}
-
-	// Specify parameters to send.
-	parameters := map[string]string{
-		"action":  "edit",
-		"title":   title,
-		"summary": summary,
-		"text":    text,
-		"token":   token,
-		"bot":     fmt.Sprintf("%t", w.loginBot),
-	}
-
-	// Make the request.
-	r, err := w.Post(ctx, parameters)
-	if err != nil {
-		return r, fmt.Errorf("failed to post: %w", err)
-	}
-
-	if e := r.Error; e != nil {
-		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
-	} else if r.Edit == nil {
-		return r, fmt.Errorf("unexpected error in write")
-	} else if r.Edit.Result != "Success" {
-		return r, fmt.Errorf("write %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.Messagecode, r.ClientLogin.Message)
-	}
-
-	return r, nil
-}
-
 // checkKeepAlive checks for the presence of an active session cookie,
 // and attempts to re-initialize the connection if one isn't found.
 func (w *Client) checkKeepAlive(ctx context.Context) error {
@@ -440,7 +218,7 @@ func (w *Client) checkKeepAlive(ctx context.Context) error {
 	}
 
 	if w.loginBot {
-		if _, err := w.BotLogin(ctx, w.username, w.password); err != nil {
+		if _, err := w.Login(ctx, w.username, w.password); err != nil {
 			return fmt.Errorf("keep-alive login failure: %w", err)
 		}
 	} else {
