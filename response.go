@@ -9,7 +9,7 @@ import (
 
 type Response struct {
 	RawJSON       string               `json:"-"`
-	Batchcomplete string               `json:"batchcomplete"`
+	BatchComplete interface{}          `json:"batchcomplete"`
 	BotLogin      *ResponseBotLogin    `json:"login"`
 	ClientLogin   *ResponseClientLogin `json:"clientlogin"`
 	Edit          *ResponseEdit        `json:"edit"`
@@ -26,7 +26,25 @@ type ResponseError struct {
 }
 
 type ResponseQuery struct {
-	Tokens map[string]string `json:"tokens"`
+	Pages  []ResponseQueryPage `json:"pages"`
+	Tokens map[string]string   `json:"tokens"`
+}
+
+type ResponseQueryPage struct {
+	PageId    int                         `json:"pageid"`
+	Namespace int                         `json:"ns"`
+	Title     string                      `json:"title"`
+	Revisions []ResponseQueryPageRevision `json:"revisions"`
+}
+
+type ResponseQueryPageRevision struct {
+	Slots map[string]ResponseQueryPageRevisionSlot `json:"slots"`
+}
+
+type ResponseQueryPageRevisionSlot struct {
+	Content       string `json:"content"`
+	ContentModel  string `json:"contentmodel"`
+	ContentFormat string `json:"contentformat"`
 }
 
 type ResponseWarnings struct {
@@ -36,23 +54,23 @@ type ResponseWarnings struct {
 type ResponseClientLogin struct {
 	Status      string `json:"status"`
 	Message     string `json:"message"`
-	Messagecode string `json:"messagecode"`
+	MessageCode string `json:"messagecode"`
 }
 
 type ResponseBotLogin struct {
-	Result     string `json:"result"`
-	Lguserid   int    `json:"lguserid"`
-	Lgusername string `json:"lgusername"`
+	Result   string `json:"result"`
+	UserId   int    `json:"lguserid"`
+	UserName string `json:"lgusername"`
 }
 
 type ResponseEdit struct {
 	Result       string    `json:"result"`
-	Pageid       int       `json:"pageid"`
+	PageId       int       `json:"pageid"`
 	Title        string    `json:"title"`
-	Contentmodel string    `json:"contentmodel"`
-	Oldrevid     int       `json:"oldrevid"`
-	Newrevid     int       `json:"newrevid"`
-	Newtimestamp time.Time `json:"newtimestamp"`
+	ContentModel string    `json:"contentmodel"`
+	OldRevId     int       `json:"oldrevid"`
+	NewRevId     int       `json:"newrevid"`
+	NewTimestamp time.Time `json:"newtimestamp"`
 	Watched      string    `json:"watched"`
 }
 

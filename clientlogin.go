@@ -106,7 +106,7 @@ func (w *Client) ClientLogin(ctx context.Context, username, password string, opt
 	} else if r.ClientLogin == nil {
 		return r, fmt.Errorf("unexpected error in login")
 	} else if r.ClientLogin.Status != "PASS" {
-		return r, fmt.Errorf("login %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.Messagecode, r.ClientLogin.Message)
+		return r, fmt.Errorf("login %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.MessageCode, r.ClientLogin.Message)
 	}
 
 	w.lastLoginTime = time.Now()

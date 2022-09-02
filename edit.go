@@ -307,7 +307,7 @@ func (w *Client) Edit(ctx context.Context, options ...EditOption) (Response, err
 	} else if r.Edit == nil {
 		return r, fmt.Errorf("unexpected error in edit")
 	} else if r.Edit.Result != "Success" {
-		return r, fmt.Errorf("write %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.Messagecode, r.ClientLogin.Message)
+		return r, fmt.Errorf("write %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.MessageCode, r.ClientLogin.Message)
 	}
 
 	return r, nil

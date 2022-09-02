@@ -161,6 +161,87 @@ func (w *Client) GetToken(ctx context.Context, token Token) (string, error) {
 	return ts, nil
 }
 
+func (w *Client) BotLogin(ctx context.Context, username, password string) (Response, error) {
+	token, err := w.GetToken(ctx, LoginToken)
+	if err != nil {
+		return Response{}, err
+	}
+
+	w.username = username
+	w.password = password
+	w.loginBot = true
+
+	v := Values{
+		"action":     "login",
+		"lgname":     username,
+		"lgpassword": password,
+		"lgtoken":    token,
+	}
+
+	r, err := w.Post(ctx, v)
+	if err != nil {
+		return r, fmt.Errorf("error parsing response: %w", err)
+	}
+
+	if e := r.Error; e != nil {
+		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
+	} else if r.BotLogin == nil {
+		return r, fmt.Errorf("unexpected error in login")
+	} else if r.BotLogin.Result != "Success" {
+		return r, fmt.Errorf("login %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.MessageCode, r.ClientLogin.Message)
+	}
+
+	w.lastLoginTime = time.Now()
+
+	return r, nil
+}
+
+func (w *Client) Get(ctx context.Context, v Values) (Response, error) {
+	v["format"] = "json"
+
+	req, err := http.NewRequestWithContext(ctx, "GET", w.apiURL.String()+"?"+v.Encode(), nil)
+	if err != nil {
+		return Response{}, fmt.Errorf("error constructing GET: %w", err)
+	}
+
+	req.Header.Set("User-Agent", w.UserAgent)
+
+	if w.Debug != nil {
+		reqdump, err := httputil.DumpRequestOut(req, true)
+		if err != nil {
+			fmt.Fprintf(w.Debug, "Err dumping request: %v\n", err)
+		} else {
+			w.Debug.Write(reqdump)
+		}
+	}
+
+	resp, err := w.Client.Do(req)
+	if err != nil {
+		return Response{}, fmt.Errorf("error executing Get: %w", err)
+	}
+
+	if w.Debug != nil {
+		respdump, err := httputil.DumpResponse(resp, true)
+		if err != nil {
+			fmt.Fprintf(w.Debug, "Err dumping response: %v\n", err)
+		} else {
+			w.Debug.Write(respdump)
+		}
+	}
+
+	// b, _ := io.ReadAll(resp.Body)
+	// buf := &bytes.Buffer{}
+	// json.Indent(buf, b, "", "  ")
+	// fmt.Println(buf.String())
+
+	r, err := ParseResponseReader(resp.Body)
+	if err != nil {
+		return r, fmt.Errorf("error parsing response: %w", err)
+	}
+
+	return r, nil
+}
+
 func (w *Client) Post(ctx context.Context, v Values) (Response, error) {
 	v["format"] = "json"
 
@@ -203,6 +284,43 @@ func (w *Client) Post(ctx context.Context, v Values) (Response, error) {
 	return r, nil
 }
 
+func (w *Client) Write(ctx context.Context, title, text, summary string) (Response, error) {
+	if err := w.checkKeepAlive(ctx); err != nil {
+		return Response{}, err
+	}
+
+	token, err := w.GetToken(ctx, CSRFToken)
+	if err != nil {
+		return Response{}, err
+	}
+
+	// Specify parameters to send.
+	parameters := map[string]string{
+		"action":  "edit",
+		"title":   title,
+		"summary": summary,
+		"text":    text,
+		"token":   token,
+		"bot":     fmt.Sprintf("%t", w.loginBot),
+	}
+
+	// Make the request.
+	r, err := w.Post(ctx, parameters)
+	if err != nil {
+		return r, fmt.Errorf("failed to post: %w", err)
+	}
+
+	if e := r.Error; e != nil {
+		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
+	} else if r.Edit == nil {
+		return r, fmt.Errorf("unexpected error in write")
+	} else if r.Edit.Result != "Success" {
+		return r, fmt.Errorf("write %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.MessageCode, r.ClientLogin.Message)
+	}
+
+	return r, nil
+}
+
 // checkKeepAlive checks for the presence of an active session cookie,
 // and attempts to re-initialize the connection if one isn't found.
 func (w *Client) checkKeepAlive(ctx context.Context) error {
@@ -218,7 +336,7 @@ func (w *Client) checkKeepAlive(ctx context.Context) error {
 	}
 
 	if w.loginBot {
-		if _, err := w.Login(ctx, w.username, w.password); err != nil {
+		if _, err := w.BotLogin(ctx, w.username, w.password); err != nil {
 			return fmt.Errorf("keep-alive login failure: %w", err)
 		}
 	} else {
