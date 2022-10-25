@@ -1,8 +1,12 @@
 module github.com/clockworksoul/mediawiki
 
-go 1.19
+go 1.18
 
-require github.com/stretchr/testify v1.8.0
+require (
+	github.com/stretchr/testify v1.8.0
+	golang.org/x/net v0.1.0
+	golang.org/x/text v0.4.0
+)
 
 require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
