@@ -1,12 +1,20 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
+	"os"
 )
 
 func main() {
-	r, err := getModulePage("clientlogin")
+	if len(os.Args) != 2 {
+		fmt.Println("Syntax: import <module>")
+		os.Exit(1)
+		return
+	}
+
+	p := os.Args[1]
+
+	r, err := getModulePage(p)
 	if err != nil {
 		panic(err)
 	}
@@ -14,10 +22,10 @@ func main() {
 	if m, err := parseModulePage(r); err != nil {
 		panic(err)
 	} else {
-		b, _ := json.MarshalIndent(m, "", "  ")
-		fmt.Println(string(b))
-
-		fmt.Println("------------")
-		fmt.Println(Generate(m))
+		if text, err := Generate(m); err != nil {
+			panic(err)
+		} else {
+			fmt.Println(text)
+		}
 	}
 }

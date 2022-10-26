@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"sort"
 	"strings"
 
 	"golang.org/x/text/cases"
@@ -11,20 +12,22 @@ import (
 
 var caser = cases.Title(language.English)
 
-func Generate(m Module) string {
+func Generate(m Module) (string, error) {
 	b := &bytes.Buffer{}
 
-	b.WriteString(`package mediawiki
+	imports, err := gatherImports(m)
+	if err != nil {
+		return "", err
+	}
 
-import (
-	"context"
-	"fmt"
-	"strconv"
-	"strings"
-	"time"
-)
+	fmt.Fprintln(b, `package mediawiki
 
-`)
+import (`)
+	for _, i := range imports {
+		fmt.Fprintf(b, "\t%q\n", i)
+	}
+
+	fmt.Fprint(b, ")\n\n")
 
 	for _, d := range strings.Split(m.Description, "\n") {
 		fmt.Fprintf(b, "// %s\n", d)
@@ -56,12 +59,80 @@ import (
 		switch p.Type {
 		case Boolean:
 			fmt.Fprintln(b, writeBooleanParameter(m, p))
-		case String:
+		case Integer:
+			fmt.Fprintln(b, writeIntegerParameter(m, p))
+		case Expiry, String:
 			fmt.Fprintln(b, writeStringParameter(m, p))
+		default:
+			return "", fmt.Errorf("unsupported parameter type: %s", p.Type)
 		}
 	}
 
-	return b.String()
+	fmt.Fprintf(b,
+		`func (w *Client) %s(ctx context.Context, options ...%sOption) (Response, error) {
+	if err := w.checkKeepAlive(ctx); err != nil {
+		return Response{}, err
+	}
+
+	token, err := w.GetToken(ctx, CSRFToken)
+	if err != nil {
+		return Response{}, err
+	}
+
+	// Specify parameters to send.
+	parameters := Values{
+		"action": "%s",
+		"token":  token,
+	}
+
+	for _, o := range options {
+		o(parameters)
+	}
+
+	// Make the request.
+	r, err := w.Post(ctx, parameters)
+	if err != nil {
+		return r, fmt.Errorf("failed to post: %%w", err)
+	}
+
+	if e := r.Error; e != nil {
+		return r, fmt.Errorf("%%s: %%s", e.Code, e.Info)
+	} else if r.%s == nil {
+		return r, fmt.Errorf("unexpected error in %s")
+	}
+
+	return r, nil
+}
+`, name, name, m.Name, name, m.Name)
+
+	return b.String(), nil
+}
+
+func gatherImports(mod Module) ([]string, error) {
+	m := map[string]interface{}{
+		"context": true,
+		"fmt":     true,
+	}
+
+	for _, p := range mod.Parameters {
+		switch p.Type {
+		case Boolean:
+			m["strconv"] = true
+		case Integer:
+			m["strconv"] = true
+		case Expiry, String:
+		default:
+			return nil, fmt.Errorf("unsupported parameter type: %s", p.Type)
+		}
+	}
+
+	var imps []string
+	for k, _ := range m {
+		imps = append(imps, k)
+	}
+	sort.Strings(imps)
+
+	return imps, nil
 }
 
 func writeHeaders(m Module, p *Param) string {
@@ -85,6 +156,23 @@ func writeBooleanParameter(m Module, p *Param) string {
 	fmt.Fprintf(b, `func (w *Client) With%s%s(b bool) %sOption {
 	return func(m map[string]string) {
 		m["%s"] = strconv.FormatBool(b)
+	}
+}
+`, mn, pn, mn, p.Name)
+
+	return b.String()
+}
+
+func writeIntegerParameter(m Module, p *Param) string {
+	b := &bytes.Buffer{}
+	mn := caser.String(m.Name)
+	pn := caser.String(p.Name)
+
+	fmt.Fprint(b, writeHeaders(m, p))
+
+	fmt.Fprintf(b, `func (w *Client) With%s%s(i int) %sOption {
+	return func(m map[string]string) {
+		m["%s"] = strconv.FormatInt(int64(i), 10)
 	}
 }
 `, mn, pn, mn, p.Name)
