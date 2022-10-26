@@ -19,13 +19,15 @@ func main() {
 		panic(err)
 	}
 
-	if m, err := parseModulePage(r); err != nil {
+	m, err := parseModulePage(r)
+	if err != nil {
 		panic(err)
-	} else {
-		if text, err := Generate(m); err != nil {
-			panic(err)
-		} else {
-			fmt.Println(text)
-		}
 	}
+
+	text, err := Generate(m)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(text)
 }

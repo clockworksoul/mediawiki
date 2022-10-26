@@ -64,7 +64,7 @@ import (`)
 		case Expiry, String:
 			fmt.Fprintln(b, writeStringParameter(m, p))
 		default:
-			return "", fmt.Errorf("unsupported parameter type: %s", p.Type)
+			return "", fmt.Errorf("unsupported parameter type for parameter %s: %s", p.Name, p.Type)
 		}
 	}
 
@@ -122,12 +122,12 @@ func gatherImports(mod Module) ([]string, error) {
 			m["strconv"] = true
 		case Expiry, String:
 		default:
-			return nil, fmt.Errorf("unsupported parameter type: %s", p.Type)
+			return nil, fmt.Errorf("unsupported parameter type for parameter %s: %s", p.Name, p.Type)
 		}
 	}
 
 	var imps []string
-	for k, _ := range m {
+	for k := range m {
 		imps = append(imps, k)
 	}
 	sort.Strings(imps)
