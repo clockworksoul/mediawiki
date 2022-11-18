@@ -1,7 +1,6 @@
 package mediawiki
 
 import (
-	"bytes"
 	"encoding/json"
 	"io"
 	"time"
@@ -31,10 +30,12 @@ type ResponseQuery struct {
 }
 
 type ResponseQueryPage struct {
-	PageId    int                         `json:"pageid"`
-	Namespace int                         `json:"ns"`
-	Title     string                      `json:"title"`
-	Revisions []ResponseQueryPageRevision `json:"revisions"`
+	PageId       int                         `json:"pageid"`
+	Namespace    int                         `json:"ns"`
+	Title        string                      `json:"title"`
+	Revisions    []ResponseQueryPageRevision `json:"revisions,omitempty"`
+	Missing      string                      `json:"missing,omitempty"`
+	CategoryInfo map[string]int              `json:"categoryinfo,omitempty"`
 }
 
 type ResponseQueryPageRevision struct {
@@ -80,31 +81,15 @@ type ResponseUpload struct {
 	Warnings *ResponseWarnings `json:"warnings"`
 }
 
-func ParseResponseReader(in io.Reader) (Response, error) {
+func ParseResponseReader(in io.Reader, v any) error {
 	b, err := io.ReadAll(in)
 	if err != nil {
-		return Response{}, err
+		return err
 	}
 
-	return ParseResponse(b)
+	return ParseResponse(b, v)
 }
 
-func ParseResponse(b []byte) (Response, error) {
-	var raw string
-
-	// Gets the raw JSON for debugging purposes
-	bb := &bytes.Buffer{}
-	if err := json.Indent(bb, b, "", "  "); err != nil {
-		raw = string(b)
-	} else {
-		raw = bb.String()
-	}
-
-	var r = Response{RawJSON: raw}
-
-	if err := json.Unmarshal(b, &r); err != nil {
-		return r, err
-	}
-
-	return r, nil
+func ParseResponse(b []byte, v any) error {
+	return json.Unmarshal(b, v)
 }

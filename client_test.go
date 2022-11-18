@@ -57,7 +57,8 @@ func TestMediawikiClientParseResponse(t *testing.T) {
 		}
 	}`
 
-	r, err := ParseResponse([]byte(mock))
+	r := Response{}
+	err := ParseResponse([]byte(mock), &r)
 	require.NoError(t, err)
 
 	assert.Equal(t, "Foo!", r.BatchComplete)
@@ -94,6 +95,7 @@ func TestMediawikiClientProtect(t *testing.T) {
 func TestMediawikiClientWrite(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
+	c.Debug = os.Stdout
 
 	_, err = c.BotLogin(context.Background(), username, password)
 	require.NoError(t, err)
@@ -103,19 +105,4 @@ func TestMediawikiClientWrite(t *testing.T) {
 	assert.Nil(t, r.Error)
 	require.NotNil(t, r.Edit)
 	assert.Equal(t, "Success", r.Edit.Result)
-}
-
-func TestMediawikiClientQueryRevisions(t *testing.T) {
-	c, err := New(apiUrl, agent)
-	require.NoError(t, err)
-
-	_, err = c.BotLogin(context.Background(), username, password)
-	require.NoError(t, err)
-
-	r, err := c.QueryRevisions(context.Background(), "Main_Page", "Help:Introduction to Yextipedia")
-	require.NoError(t, err)
-	assert.Nil(t, r.Error)
-	require.NotNil(t, r.Query)
-	assert.Len(t, r.Query.Pages, 2)
-	assert.NotEmpty(t, r.Query.Pages[0].Revisions[0].Slots["main"].Content)
 }

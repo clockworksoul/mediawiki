@@ -109,7 +109,9 @@ func parseModulePage(r io.ReadCloser) (Module, error) {
 					case "integer":
 						p.Type = Integer
 					default:
-						return Module{}, fmt.Errorf("unhandled type for parameter %s: %s", p.Name, s)
+						fmt.Printf("Warning: Unhandled type for parameter %s: %s", p.Name, s)
+						continue
+						// return Module{}, fmt.Errorf("unhandled type for parameter %s: %s", p.Name, s)
 					}
 				default:
 					b.Reset()

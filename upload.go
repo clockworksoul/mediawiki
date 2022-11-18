@@ -68,7 +68,8 @@ func (w *Client) Upload(ctx context.Context, name string, file io.Reader, filena
 		return Response{}, fmt.Errorf(resp.Status)
 	}
 
-	r, err := ParseResponseReader(resp.Body)
+	r := Response{}
+	err = ParseResponseReader(resp.Body, &r)
 	if err != nil {
 		return r, err
 	}
