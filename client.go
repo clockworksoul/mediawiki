@@ -363,6 +363,45 @@ func (w *Client) Post(ctx context.Context, v Values) (Response, error) {
 	return r, nil
 }
 
+func (w *Client) PostInto(ctx context.Context, v Values, a any) (string, error) {
+	v["format"] = "json"
+
+	req, err := http.NewRequestWithContext(ctx, "POST", w.apiURL.String(), strings.NewReader(v.Encode()))
+	if err != nil {
+		return "", fmt.Errorf("error constructing POST: %w", err)
+	}
+
+	req.Header.Set("User-Agent", w.UserAgent)
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+
+	resp, err := w.Client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("error executing POST: %w", err)
+	}
+
+	b, _ := io.ReadAll(resp.Body)
+	buf := &bytes.Buffer{}
+	json.Indent(buf, b, "", "  ")
+	j := buf.String()
+
+	if w.Debug != nil {
+		fmt.Fprintln(w.Debug, j)
+	}
+
+	err = ParseResponseReader(buf, a)
+	if err != nil {
+		return j, fmt.Errorf("error parsing response: %w", err)
+	}
+
+	if w.Debug != nil {
+		fmt.Fprintln(w.Debug, "-----")
+		b, _ = json.MarshalIndent(a, "", "  ")
+		fmt.Fprintln(w.Debug, string(b))
+	}
+
+	return j, nil
+}
+
 func (w *Client) Write(ctx context.Context, title, text, summary string) (Response, error) {
 	if err := w.checkKeepAlive(ctx); err != nil {
 		return Response{}, err

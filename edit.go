@@ -4,286 +4,343 @@ import (
 	"context"
 	"fmt"
 	"strconv"
+	"time"
 )
+
+type EditResponse struct {
+	CoreResponse
+	Edit *EditEditResponse `json:"edit,omitempty"`
+}
+
+type EditEditResponse struct {
+	Result       string     `json:"result"`
+	PageId       int        `json:"pageid"`
+	Title        string     `json:"title"`
+	ContentModel string     `json:"contentmodel"`
+	OldRevId     int        `json:"oldrevid,omitempty"`
+	NewRevId     int        `json:"newrevid,omitempty"`
+	NewTimestamp *time.Time `json:"newtimestamp,omitempty"`
+	Watched      any        `json:"watched,omitempty"`
+	NoChange     any        `json:"nochange,omitempty"`
+}
 
 type EditOption func(map[string]string)
 
-// WithEditTitle
-// Title of the page to edit. Cannot be used together with EditPageId.
-func (w *Client) WithEditTitle(s string) EditOption {
-	return func(m map[string]string) {
-		m["title"] = s
-	}
+type EditClient struct {
+	o []EditOption
+	c *Client
 }
 
-// WithEditPageId
+func (c *Client) Edit() *EditClient {
+	return &EditClient{c: c}
+}
+
+// Title
+// Title of the page to edit. Cannot be used together with EditPageId.
+func (w *EditClient) Title(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
+		m["title"] = s
+	})
+	return w
+}
+
+// PageId
 // Page ID of the page to edit. Cannot be used together with title.
 // Type: integer
-func (w *Client) WithEditPageId(i int) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) PageId(i int) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["pageid"] = strconv.FormatInt(int64(i), 10)
-	}
+	})
+	return w
 }
 
-// WithEditSection
+// Section
 // Section identifier. 0 for the top section, new for a new section. Often a positive integer, but can also be non-numeric.
-func (w *Client) WithEditSection(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Section(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["section"] = s
-	}
+	})
+	return w
 }
 
-// WithEditSectionTitle
+// SectionTitle
 // The title for a new section when using section=new.
-func (w *Client) WithEditSectionTitle(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) SectionTitle(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["sectiontitle"] = s
-	}
+	})
+	return w
 }
 
-// WithEditText
+// Text
 // Page content.
-func (w *Client) WithEditText(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Text(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["text"] = s
-	}
+	})
+	return w
 }
 
-// WithEditSummary
+// Summary
 // Edit summary.
 // When this parameter is not provided or empty, an edit summary may be generated automatically.
 // When using section=new and sectiontitle is not provided, the value of this parameter is used for the section title instead, and an edit summary is generated automatically.
-func (w *Client) WithEditSummary(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Summary(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["summary"] = s
-	}
+	})
+	return w
 }
 
-// WithEditTags
+// Tags
 // Change tags to apply to the revision.
 // Values (separate with | or alternative): possible vandalism, repeating characters
-func (w *Client) WithEditTags(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Tags(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["tags"] = s
-	}
+	})
+	return w
 }
 
-// WithEditMinor
+// Minor
 // Mark this edit as a minor edit.
 // Type: boolean (details)
-func (w *Client) WithEditMinor(b bool) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Minor(b bool) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["minor"] = strconv.FormatBool(b)
-	}
+	})
+	return w
 }
 
-// WithEditNotMinor
+// NotMinor
 // Do not mark this edit as a minor edit even if the "Mark all edits minor by default" user preference is set.
 // Type: boolean (details)
-func (w *Client) WithEditNotMinor(b bool) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) NotMinor(b bool) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["motminor"] = strconv.FormatBool(b)
-	}
+	})
+	return w
 }
 
-// WithEditBot
+// Bot
 // Mark this edit as a bot edit.
 // Type: boolean (details)
-func (w *Client) WithEditBot(b bool) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Bot(b bool) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["bot"] = strconv.FormatBool(b)
-	}
+	})
+	return w
 }
 
-// WithEditBaseRevId
+// BaseRevId
 // ID of the base revision, used to detect edit conflicts. May be obtained through action=query&prop=revisions. Self-conflicts cause the edit to fail unless basetimestamp is set.
 // Type: integer
-func (w *Client) WithEditBaseRevId(i int) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) BaseRevId(i int) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["baserevid"] = strconv.FormatInt(int64(i), 10)
-	}
+	})
+	return w
 }
 
-// WithEditBaseTimestamp
+// BaseTimestamp
 // Timestamp of the base revision, used to detect edit conflicts. May be obtained through action=query&prop=revisions&rvprop=timestamp. Self-conflicts are ignored.
 // Type: timestamp (allowed formats)
-func (w *Client) WithEditBaseTimestamp(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) BaseTimestamp(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["basetimestamp"] = s
-	}
+	})
+	return w
 }
 
-// WithEditStartTimestamp
+// StartTimestamp
 // Timestamp when the editing process began, used to detect edit conflicts. An appropriate value may be obtained using curtimestamp when beginning the edit process (e.g. when loading the page content to edit).
 // Type: timestamp (allowed formats)
-func (w *Client) WithEditStartTimestamp(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) StartTimestamp(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["starttimestamp"] = s
-	}
+	})
+	return w
 }
 
-// WithEditRecreate
+// Recreate
 // Override any errors about the page having been deleted in the meantime.
 // Type: boolean (details)
-func (w *Client) WithEditRecreate(b bool) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Recreate(b bool) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["recreate"] = strconv.FormatBool(b)
-	}
+	})
+	return w
 }
 
-// WithEditCreateOnly
+// CreateOnly
 // Don't edit the page if it exists already.
 // Type: boolean (details)
-func (w *Client) WithEditCreateOnly(b bool) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) CreateOnly(b bool) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["createonly"] = strconv.FormatBool(b)
-	}
+	})
+	return w
 }
 
-// WithEditNoCreate
+// NoCreate
 // Throw an error if the page doesn't exist.
 // Type: boolean (details)
-func (w *Client) WithEditNoCreate(b bool) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) NoCreate(b bool) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["nocreate"] = strconv.FormatBool(b)
-	}
+	})
+	return w
 }
 
-// WithEditWatch
+// Watch
 // Deprecated.
 // Add the page to the current user's watchlist.
 // Type: boolean (details)
-func (w *Client) WithEditWatch(b bool) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Watch(b bool) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["watch"] = strconv.FormatBool(b)
-	}
+	})
+	return w
 }
 
-// WithEditUnwatch
+// Unwatch
 // Deprecated.
 // Remove the page from the current user's watchlist.
 // Type: boolean (details)
-func (w *Client) WithEditUnwatch(b bool) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Unwatch(b bool) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["unwatch"] = strconv.FormatBool(b)
-	}
+	})
+	return w
 }
 
-// WithEditWatchlist
+// Watchlist
 // Unconditionally add or remove the page from the current user's watchlist, use preferences (ignored for bot users) or do not change watch.
 // One of the following values: nochange, preferences, unwatch, watch
 // Default: preferences
-func (w *Client) WithEditWatchlist(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Watchlist(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["watchlist"] = s
-	}
+	})
+	return w
 }
 
-// WithEditWatchListExpiry
+// WatchListExpiry
 // Watchlist expiry timestamp. Omit this parameter entirely to leave the current expiry unchanged.
 // Type: expiry (details)
-func (w *Client) WithEditWatchListExpiry(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) WatchListExpiry(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["watchlistexpiry"] = s
-	}
+	})
+	return w
 }
 
-// WithEditMd5
+// Md5
 // The MD5 hash of the text parameter, or the prependtext and appendtext parameters concatenated. If set, the edit won't be done unless the hash is correct.
-func (w *Client) WithEditMd5(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Md5(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["md5"] = s
-	}
+	})
+	return w
 }
 
-// WithEditPrependText
+// PrependText
 // Add this text to the beginning of the page or section. Overrides text.
-func (w *Client) WithEditPrependText(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) PrependText(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["prependtext"] = s
-	}
+	})
+	return w
 }
 
-// WithEditAppendText
+// AppendText
 // Add this text to the end of the page or section. Overrides text.
 // Use section=new to append a new section, rather than this parameter.
-func (w *Client) WithEditAppendText(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) AppendText(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["appendtext"] = s
-	}
+	})
+	return w
 }
 
-// WithEditUndo
+// Undo
 // Undo this revision. Overrides text, prependtext and appendtext.
 // Type: integer
 // The value must be no less than 0.
-func (w *Client) WithEditUndo(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Undo(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["undo"] = s
-	}
+	})
+	return w
 }
 
-// WithEditUndoAfter
+// UndoAfter
 // Undo all revisions from undo to this one. If not set, just undo one revision.
 // Type: integer
 // The value must be no less than 0.
-func (w *Client) WithEditUndoAfter(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) UndoAfter(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["undoafter"] = s
-	}
+	})
+	return w
 }
 
-// WithEditRedirect
+// Redirect
 // Automatically resolve redirects.
 // Type: boolean (details)
-func (w *Client) WithEditRedirect(b bool) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) Redirect(b bool) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["redirect"] = strconv.FormatBool(b)
-	}
+	})
+	return w
 }
 
-// WithEditContentFormat
+// ContentFormat
 // Content serialization format used for the input text.
 // One of the following values: application/json, application/octet-stream, application/unknown, application/x-binary, text/css, text/javascript, text/plain, text/unknown, text/x-wiki, unknown/unknown
-func (w *Client) WithEditContentFormat(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) ContentFormat(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["contentformat"] = s
-	}
+	})
+	return w
 }
 
-// WithEditContentModel
+// ContentModel
 // Content model of the new content.
 // One of the following values: GadgetDefinition, Json.JsonConfig, JsonSchema, Map.JsonConfig, MassMessageListContent, NewsletterContent, Scribunto, SecurePoll, Tabular.JsonConfig, css, flow-board, javascript, json, sanitized-css, text, translate-messagebundle, unknown, wikitext
-func (w *Client) WithEditContentModel(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) ContentModel(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["contentmodel"] = s
-	}
+	})
+	return w
 }
 
-// WithEditCaptchaWord
+// CaptchaWord
 // Answer to the CAPTCHA
-func (w *Client) WithEditCaptchaWord(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) CaptchaWord(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["captchaword"] = s
-	}
+	})
+	return w
 }
 
-// WithEditCaptchaId
+// CaptchaId
 // CAPTCHA ID from previous request
-func (w *Client) WithEditCaptchaId(s string) EditOption {
-	return func(m map[string]string) {
+func (w *EditClient) CaptchaId(s string) *EditClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["captchaid"] = s
-	}
+	})
+	return w
 }
 
-func (w *Client) Edit(ctx context.Context, options ...EditOption) (Response, error) {
-	if err := w.checkKeepAlive(ctx); err != nil {
-		return Response{}, err
+func (w *EditClient) Do(ctx context.Context) (EditResponse, error) {
+	if err := w.c.checkKeepAlive(ctx); err != nil {
+		return EditResponse{}, err
 	}
 
-	token, err := w.GetToken(ctx, CSRFToken)
+	token, err := w.c.GetToken(ctx, CSRFToken)
 	if err != nil {
-		return Response{}, err
+		return EditResponse{}, err
 	}
 
 	// Specify parameters to send.
@@ -292,12 +349,14 @@ func (w *Client) Edit(ctx context.Context, options ...EditOption) (Response, err
 		"token":  token,
 	}
 
-	for _, o := range options {
+	for _, o := range w.o {
 		o(parameters)
 	}
 
 	// Make the request.
-	r, err := w.Post(ctx, parameters)
+	r := EditResponse{}
+	j, err := w.c.PostInto(ctx, parameters, &r)
+	r.RawJSON = j
 	if err != nil {
 		return r, fmt.Errorf("failed to post: %w", err)
 	}

@@ -209,12 +209,11 @@ func (w *QueryCategoryinfoClient) Do(ctx context.Context) (QueryCategoryInfoResp
 	// Make the request.
 	r := QueryCategoryInfoResponse{}
 	j, err := w.c.GetInto(ctx, parameters, &r)
+	r.RawJSON = j
 	if err != nil {
-		r.RawJSON = j
 		return r, fmt.Errorf("failed to get: %w", err)
 	}
 
-	r.RawJSON = j
 	if e := r.Error; e != nil {
 		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
 	} else if r.Query == nil {
@@ -223,22 +222,3 @@ func (w *QueryCategoryinfoClient) Do(ctx context.Context) (QueryCategoryInfoResp
 
 	return r, nil
 }
-
-// type QueryCategoryInfo struct {
-// 	RawJSON       string            `json:"-"`
-// 	BatchComplete interface{}       `json:"batchcomplete"`
-// 	Error         *ResponseError    `json:"error"`
-// 	Warnings      *ResponseWarnings `json:"warnings"`
-// 	Query         Query             `json:"query"`
-// }
-
-// type Categoryinfo struct {
-// 	Size    int `json:"size"`
-// 	Pages   int `json:"pages"`
-// 	Files   int `json:"files"`
-// 	Subcats int `json:"subcats"`
-// }
-
-// type Query struct {
-// 	Pages map[string]ResponseQueryPage `json:"pages"`
-// }

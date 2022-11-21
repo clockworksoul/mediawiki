@@ -6,6 +6,13 @@ import (
 	"time"
 )
 
+type CoreResponse struct {
+	RawJSON     string                   `json:"-"`
+	ClientLogin *ResponseClientLogin     `json:"clientlogin,omitempty"`
+	Error       *ResponseError           `json:"error,omitempty"`
+	Warnings    map[string]ResponseError `json:"warnings,omitempty"`
+}
+
 type Response struct {
 	RawJSON       string               `json:"-"`
 	BatchComplete interface{}          `json:"batchcomplete"`
@@ -19,9 +26,10 @@ type Response struct {
 }
 
 type ResponseError struct {
-	Code   string `json:"code"`
-	Info   string `json:"info"`
-	Docref string `json:"docref"`
+	Code   string `json:"code,omitempty"`
+	Docref string `json:"docref,omitempty"`
+	Info   string `json:"info,omitempty"`
+	Star   string `json:"*,omitempty"`
 }
 
 type ResponseQuery struct {
@@ -69,9 +77,9 @@ type ResponseEdit struct {
 	PageId       int       `json:"pageid"`
 	Title        string    `json:"title"`
 	ContentModel string    `json:"contentmodel"`
-	OldRevId     int       `json:"oldrevid"`
-	NewRevId     int       `json:"newrevid"`
-	NewTimestamp time.Time `json:"newtimestamp"`
+	OldRevId     int       `json:"oldrevid,omitempty"`
+	NewRevId     int       `json:"newrevid,omitempty"`
+	NewTimestamp time.Time `json:"newtimestamp,omitempty"`
 	Watched      string    `json:"watched"`
 }
 

@@ -91,18 +91,3 @@ func TestMediawikiClientProtect(t *testing.T) {
 	require.NoError(t, err)
 	assert.Nil(t, r.Error)
 }
-
-func TestMediawikiClientWrite(t *testing.T) {
-	c, err := New(apiUrl, agent)
-	require.NoError(t, err)
-	c.Debug = os.Stdout
-
-	_, err = c.BotLogin(context.Background(), username, password)
-	require.NoError(t, err)
-
-	r, err := c.Write(context.Background(), "Test", "This is a test.", "Automated test")
-	require.NoError(t, err)
-	assert.Nil(t, r.Error)
-	require.NotNil(t, r.Edit)
-	assert.Equal(t, "Success", r.Edit.Result)
-}
