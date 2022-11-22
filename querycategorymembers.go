@@ -78,7 +78,7 @@ func (w *QueryCategoryMembersClient) Do(ctx context.Context) (QueryCategoryMembe
 type QueryCategoryMembers struct {
 	QueryResponse
 	BatchComplete string                        `json:"batchcomplete"`
-	Continue      *QueryCategoryMembersContinue `json:"continue"`
+	Continue      *QueryCategoryMembersContinue `json:"continue,omitempty"`
 	Query         *QueryCategoryMembersQuery    `json:"query"`
 }
 

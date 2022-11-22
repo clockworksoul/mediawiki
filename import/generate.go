@@ -69,14 +69,14 @@ import (`)
 	}
 
 	fmt.Fprintf(b,
-		`func (w *Client) %s(ctx context.Context, options ...%sOption) (Response, error) {
+		`func (w *%sClient) Do(ctx context.Context) (%sResponse, error) {
 	if err := w.checkKeepAlive(ctx); err != nil {
-		return Response{}, err
+		return %sResponse{}, err
 	}
 
 	token, err := w.GetToken(ctx, CSRFToken)
 	if err != nil {
-		return Response{}, err
+		return %sResponse{}, err
 	}
 
 	// Specify parameters to send.
@@ -90,7 +90,9 @@ import (`)
 	}
 
 	// Make the request.
-	r, err := w.Post(ctx, parameters)
+	r := %sResponse{}
+	j, err := w.PostInto(ctx, parameters, &r)
+	r.RawJSON = j
 	if err != nil {
 		return r, fmt.Errorf("failed to post: %%w", err)
 	}
@@ -103,7 +105,7 @@ import (`)
 
 	return r, nil
 }
-`, name, name, m.Name, name, m.Name)
+`, name, name, name, name, m.Name, name, name, m.Name)
 
 	return b.String(), nil
 }
@@ -138,7 +140,7 @@ func gatherImports(mod Module) ([]string, error) {
 func writeHeaders(m Module, p *Param) string {
 	b := &bytes.Buffer{}
 
-	fmt.Fprintf(b, "// With%s%s\n", caser.String(m.Name), caser.String(p.Name))
+	fmt.Fprintf(b, "// %s\n", caser.String(p.Name))
 	for _, d := range strings.Split(p.Description, "\n") {
 		fmt.Fprintf(b, "// %s\n", d)
 	}
@@ -153,10 +155,11 @@ func writeBooleanParameter(m Module, p *Param) string {
 
 	fmt.Fprint(b, writeHeaders(m, p))
 
-	fmt.Fprintf(b, `func (w *Client) With%s%s(b bool) %sOption {
-	return func(m map[string]string) {
+	fmt.Fprintf(b, `func (w *%sClient) %s(b bool) *%sClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["%s"] = strconv.FormatBool(b)
-	}
+	})
+	return w
 }
 `, mn, pn, mn, p.Name)
 
@@ -170,10 +173,11 @@ func writeIntegerParameter(m Module, p *Param) string {
 
 	fmt.Fprint(b, writeHeaders(m, p))
 
-	fmt.Fprintf(b, `func (w *Client) With%s%s(i int) %sOption {
-	return func(m map[string]string) {
+	fmt.Fprintf(b, `func (w *%sClient) %s(i int) *%sClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["%s"] = strconv.FormatInt(int64(i), 10)
-	}
+	})
+	return w
 }
 `, mn, pn, mn, p.Name)
 
@@ -187,10 +191,11 @@ func writeStringParameter(m Module, p *Param) string {
 
 	fmt.Fprint(b, writeHeaders(m, p))
 
-	fmt.Fprintf(b, `func (w *Client) With%s%s(s string) %sOption {
-	return func(m map[string]string) {
+	fmt.Fprintf(b, `func (w *%sClient) %s(s string) *%sClient {
+	w.o = append(w.o, func(m map[string]string) {
 		m["%s"] = s
-	}
+	})
+	return w
 }
 `, mn, pn, mn, p.Name)
 
@@ -201,15 +206,15 @@ func writeAdditionalParameter(m Module, p *Param) string {
 	b := &bytes.Buffer{}
 	mn := caser.String(m.Name)
 
-	fmt.Fprintf(b, "// With%sAdditionalParam\n", caser.String(m.Name))
+	fmt.Fprintf(b, "// AdditionalParam\n")
 	for _, d := range strings.Split(p.Description, "\n") {
 		fmt.Fprintf(b, "// %s\n", d)
 	}
 
-	fmt.Fprintf(b, `func (w *Client) With%sAdditionalParam(key, s string) %sOption {
-	return func(m map[string]string) {
+	fmt.Fprintf(b, `func (w *%sClient) AdditionalParam(key, s string) *%sOption {
+	w.o = append(w.o, func(m map[string]string) {
 		m[key] = s
-	}
+	})
 }
 `, mn, mn)
 
