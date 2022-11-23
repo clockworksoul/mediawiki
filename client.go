@@ -265,7 +265,9 @@ func (w *Client) GetInto(ctx context.Context, v Values, a any) (string, error) {
 
 	query := w.apiURL.String() + "?" + v.Encode()
 
-	fmt.Println(query)
+	if w.Debug != nil {
+		fmt.Fprintln(w.Debug, query)
+	}
 
 	req, err := http.NewRequestWithContext(ctx, "GET", query, nil)
 	if err != nil {
@@ -400,43 +402,6 @@ func (w *Client) PostInto(ctx context.Context, v Values, a any) (string, error) 
 	}
 
 	return j, nil
-}
-
-func (w *Client) Write(ctx context.Context, title, text, summary string) (Response, error) {
-	if err := w.checkKeepAlive(ctx); err != nil {
-		return Response{}, err
-	}
-
-	token, err := w.GetToken(ctx, CSRFToken)
-	if err != nil {
-		return Response{}, err
-	}
-
-	// Specify parameters to send.
-	parameters := map[string]string{
-		"action":  "edit",
-		"title":   title,
-		"summary": summary,
-		"text":    text,
-		"token":   token,
-		"bot":     fmt.Sprintf("%t", w.loginBot),
-	}
-
-	// Make the request.
-	r, err := w.Post(ctx, parameters)
-	if err != nil {
-		return r, fmt.Errorf("failed to post: %w", err)
-	}
-
-	if e := r.Error; e != nil {
-		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
-	} else if r.Edit == nil {
-		return r, fmt.Errorf("unexpected error in write")
-	} else if r.Edit.Result != "Success" {
-		return r, fmt.Errorf("write %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.MessageCode, r.ClientLogin.Message)
-	}
-
-	return r, nil
 }
 
 // checkKeepAlive checks for the presence of an active session cookie,

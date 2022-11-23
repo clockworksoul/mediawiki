@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMediawikiEditGood(t *testing.T) {
+func TestEditGood(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
@@ -29,7 +29,7 @@ func TestMediawikiEditGood(t *testing.T) {
 	CompareJSON(t, r.RawJSON, r, false)
 }
 
-func TestMediawikiEditError(t *testing.T) {
+func TestEditError(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
@@ -45,7 +45,7 @@ func TestMediawikiEditError(t *testing.T) {
 	CompareJSON(t, r.RawJSON, r, false)
 }
 
-func TestMediawikiEditRepeated(t *testing.T) {
+func TestEditRepeated(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 

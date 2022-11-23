@@ -3,22 +3,24 @@ package mediawiki
 import (
 	"context"
 	"encoding/json"
+	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-func TestQueryCategorylist(t *testing.T) {
+func TestQueryAllpages(t *testing.T) {
 	ctx := context.Background()
 
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
+	c.Debug = os.Stdout
 
 	_, err = c.BotLogin(ctx, username, password)
 	require.NoError(t, err)
 
-	r, err := c.QueryCategoryInfo().Prop("categoryinfo").Titles("Category:Automatically converted pages").Do(ctx)
+	r, err := c.QueryAllpages().Limit(1).From("T").Do(ctx)
 	require.NoError(t, err)
 	assert.Nil(t, r.Error)
 

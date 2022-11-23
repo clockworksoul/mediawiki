@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMediawikiQueryCategoryMembers(t *testing.T) {
+func TestQueryCategoryMembers(t *testing.T) {
 	ctx := context.Background()
 
 	c, err := New(apiUrl, agent)

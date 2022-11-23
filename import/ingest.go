@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"net/url"
 	"strings"
 
 	"golang.org/x/net/html"
@@ -35,12 +36,14 @@ func attrMap(attr []html.Attribute) map[string]string {
 }
 
 func getModulePage(module string) (io.ReadCloser, error) {
-	url := fmt.Sprintf("https://www.mediawiki.org/w/api.php?action=help&modules=%s", module)
+	url := fmt.Sprintf("https://www.mediawiki.org/w/api.php?action=help&modules=%s", url.PathEscape(module))
 
 	r, err := http.Get(url)
 	if err != nil {
 		return nil, err
 	}
+
+	fmt.Println(r.StatusCode)
 
 	return r.Body, nil
 }

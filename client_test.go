@@ -19,7 +19,7 @@ var (
 	username = os.Getenv("MEDIAWIKI_USERNAME")
 )
 
-func TestMediawikiClientGetToken(t *testing.T) {
+func TestClientGetToken(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
@@ -28,7 +28,7 @@ func TestMediawikiClientGetToken(t *testing.T) {
 	require.Greater(t, len(token), 0)
 }
 
-func TestMediawikiClientBotLogin(t *testing.T) {
+func TestClientBotLogin(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
@@ -38,7 +38,7 @@ func TestMediawikiClientBotLogin(t *testing.T) {
 	assert.Equal(t, "Success", r.BotLogin.Result)
 }
 
-func TestMediawikiClientParseResponse(t *testing.T) {
+func TestClientParseResponse(t *testing.T) {
 	mock := `{
 		"batchcomplete": "Foo!",
 		"warnings": {
@@ -74,20 +74,20 @@ func TestMediawikiClientParseResponse(t *testing.T) {
 	assert.Equal(t, "You got an error.", r.Error.Info)
 }
 
-func TestMediawikiClientProtect(t *testing.T) {
+func TestClientProtect(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
 	_, err = c.BotLogin(context.Background(), username, password)
 	require.NoError(t, err)
 
-	r, err := c.Write(context.Background(), "Protection test", "This is a test.", "Automated test")
+	r, err := c.Edit().Title("Protection test").Text("This is a test.").Summary("Automated test.").Do(context.Background())
 	require.NoError(t, err)
 	assert.Nil(t, r.Error)
 	require.NotNil(t, r.Edit)
 	assert.Equal(t, "Success", r.Edit.Result)
 
-	r, err = c.Protect(context.Background(), "Protection test", "This is a test")
+	r2, err := c.Protect(context.Background(), "Protection test", "This is a test")
 	require.NoError(t, err)
-	assert.Nil(t, r.Error)
+	assert.Nil(t, r2.Error)
 }

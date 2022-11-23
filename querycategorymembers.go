@@ -6,6 +6,22 @@ import (
 	"strconv"
 )
 
+type QueryCategoryMembers struct {
+	QueryResponse
+	BatchComplete string                        `json:"batchcomplete"`
+	Continue      *QueryCategoryMembersContinue `json:"continue,omitempty"`
+	Query         *QueryCategoryMembersQuery    `json:"query"`
+}
+
+type QueryCategoryMembersQuery struct {
+	CategoryMembers []ResponseQueryPage `json:"categorymembers"`
+}
+
+type QueryCategoryMembersContinue struct {
+	CmContinue string `json:"cmcontinue"`
+	Continue   string `json:"continue"`
+}
+
 type QueryCategoryMembersClient struct {
 	o []QueryOption
 	c *Client
@@ -73,20 +89,4 @@ func (w *QueryCategoryMembersClient) Do(ctx context.Context) (QueryCategoryMembe
 	}
 
 	return r, nil
-}
-
-type QueryCategoryMembers struct {
-	QueryResponse
-	BatchComplete string                        `json:"batchcomplete"`
-	Continue      *QueryCategoryMembersContinue `json:"continue,omitempty"`
-	Query         *QueryCategoryMembersQuery    `json:"query"`
-}
-
-type QueryCategoryMembersQuery struct {
-	CategoryMembers []ResponseQueryPage `json:"categorymembers"`
-}
-
-type QueryCategoryMembersContinue struct {
-	CmContinue string `json:"cmcontinue"`
-	Continue   string `json:"continue"`
 }

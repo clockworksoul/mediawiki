@@ -35,8 +35,6 @@ type QueryCategoryinfoClient struct {
 	c *Client
 }
 
-// WithQueryProp
-// Which properties to get for the queried pages.
 func (c *Client) QueryCategoryInfo() *QueryCategoryinfoClient {
 	return &QueryCategoryinfoClient{c: c}
 }

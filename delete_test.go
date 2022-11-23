@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestMediawikiDeleteGood(t *testing.T) {
+func TestDeleteGood(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
@@ -31,7 +31,7 @@ func TestMediawikiDeleteGood(t *testing.T) {
 	CompareJSON(t, dr.RawJSON, dr, false)
 }
 
-func TestMediawikiDeleteError(t *testing.T) {
+func TestDeleteError(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 

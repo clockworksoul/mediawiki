@@ -70,11 +70,11 @@ import (`)
 
 	fmt.Fprintf(b,
 		`func (w *%sClient) Do(ctx context.Context) (%sResponse, error) {
-	if err := w.checkKeepAlive(ctx); err != nil {
+	if err := w.c.checkKeepAlive(ctx); err != nil {
 		return %sResponse{}, err
 	}
 
-	token, err := w.GetToken(ctx, CSRFToken)
+	token, err := w.c.GetToken(ctx, CSRFToken)
 	if err != nil {
 		return %sResponse{}, err
 	}
@@ -85,13 +85,13 @@ import (`)
 		"token":  token,
 	}
 
-	for _, o := range options {
+	for _, o := range w.o {
 		o(parameters)
 	}
 
 	// Make the request.
 	r := %sResponse{}
-	j, err := w.PostInto(ctx, parameters, &r)
+	j, err := w.c.PostInto(ctx, parameters, &r)
 	r.RawJSON = j
 	if err != nil {
 		return r, fmt.Errorf("failed to post: %%w", err)
