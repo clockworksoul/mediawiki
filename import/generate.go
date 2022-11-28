@@ -45,7 +45,7 @@ import (`)
 	b.WriteRune('\n')
 
 	caser := cases.Title(language.English)
-	name := caser.String(m.Name)
+	name := strings.ReplaceAll(caser.String(m.Name), "+", "")
 
 	fmt.Fprintln(b, "//", name)
 	fmt.Fprintf(b, "type %sOption func(map[string]string)\n\n", name)

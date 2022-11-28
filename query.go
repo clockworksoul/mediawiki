@@ -4,7 +4,7 @@ import "time"
 
 type QueryResponse struct {
 	RawJSON       string                       `json:"-"`
-	BatchComplete bool                         `json:"batchcomplete"`
+	BatchComplete any                          `json:"batchcomplete"`
 	Error         *QueryResponseError          `json:"error,omitempty"`
 	Query         *QueryResponseQuery          `json:"query,omitempty"`
 	Warnings      map[string]map[string]string `json:"warnings,omitempty"`

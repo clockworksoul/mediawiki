@@ -2,8 +2,6 @@ package mediawiki
 
 import (
 	"context"
-	"encoding/json"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -15,7 +13,6 @@ func TestQueryAllpages(t *testing.T) {
 
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
-	c.Debug = os.Stdout
 
 	_, err = c.BotLogin(ctx, username, password)
 	require.NoError(t, err)
@@ -24,6 +21,5 @@ func TestQueryAllpages(t *testing.T) {
 	require.NoError(t, err)
 	assert.Nil(t, r.Error)
 
-	m, _ := json.Marshal(r)
-	assert.JSONEq(t, r.RawJSON, string(m))
+	CompareJSON(t, r.RawJSON, r, false)
 }

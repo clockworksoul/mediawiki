@@ -44,5 +44,5 @@ func TestDeleteError(t *testing.T) {
 	assert.NotNil(t, dr.Error)
 	require.Nil(t, dr.Delete)
 
-	CompareJSON(t, dr.RawJSON, dr, true)
+	CompareJSON(t, dr.RawJSON, dr, false)
 }

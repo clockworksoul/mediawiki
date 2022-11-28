@@ -9,8 +9,7 @@ import (
 
 type QueryCategoryInfoResponse struct {
 	QueryResponse
-	BatchComplete string                          `json:"batchcomplete"`
-	Query         *QueryCategoryInfoResponseQuery `json:"query,omitempty"`
+	Query *QueryCategoryInfoResponseQuery `json:"query,omitempty"`
 }
 
 type QueryCategoryInfoResponseQuery struct {

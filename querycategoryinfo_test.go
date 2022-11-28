@@ -2,7 +2,6 @@ package mediawiki
 
 import (
 	"context"
-	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -22,6 +21,5 @@ func TestQueryCategorylist(t *testing.T) {
 	require.NoError(t, err)
 	assert.Nil(t, r.Error)
 
-	m, _ := json.Marshal(r)
-	assert.JSONEq(t, r.RawJSON, string(m))
+	CompareJSON(t, r.RawJSON, r, false)
 }
