@@ -7,8 +7,9 @@ import (
 
 type QueryResponse struct {
 	CoreResponse
-	BatchComplete any                 `json:"batchcomplete"`
-	Query         *QueryResponseQuery `json:"query,omitempty"`
+	BatchComplete any                            `json:"batchcomplete"`
+	Continue      *QueryAllpagesResponseContinue `json:"continue,omitempty"`
+	Query         *QueryResponseQuery            `json:"query,omitempty"`
 }
 
 type QueryResponseNormalized struct {
