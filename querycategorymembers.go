@@ -14,7 +14,7 @@ type QueryCategoryMembers struct {
 }
 
 type QueryCategoryMembersQuery struct {
-	CategoryMembers []ResponseQueryPage `json:"categorymembers"`
+	CategoryMembers []QueryResponseQueryPage `json:"categorymembers"`
 }
 
 type QueryCategoryMembersContinue struct {

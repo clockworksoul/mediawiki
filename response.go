@@ -14,12 +14,12 @@ type CoreResponse struct {
 }
 
 type Response struct {
+	CoreResponse
 	RawJSON       string               `json:"-"`
 	BatchComplete interface{}          `json:"batchcomplete"`
 	BotLogin      *ResponseBotLogin    `json:"login"`
 	ClientLogin   *ResponseClientLogin `json:"clientlogin"`
 	Edit          *ResponseEdit        `json:"edit"`
-	Error         *ResponseError       `json:"error"`
 	Query         *ResponseQuery       `json:"query"`
 	Upload        *ResponseUpload      `json:"upload"`
 	Warnings      *ResponseWarnings    `json:"warnings"`
@@ -33,27 +33,8 @@ type ResponseError struct {
 }
 
 type ResponseQuery struct {
-	Pages  []ResponseQueryPage `json:"pages"`
-	Tokens map[string]string   `json:"tokens"`
-}
-
-type ResponseQueryPage struct {
-	PageId       int                         `json:"pageid"`
-	Namespace    int                         `json:"ns"`
-	Title        string                      `json:"title"`
-	Revisions    []ResponseQueryPageRevision `json:"revisions,omitempty"`
-	Missing      string                      `json:"missing,omitempty"`
-	CategoryInfo map[string]int              `json:"categoryinfo,omitempty"`
-}
-
-type ResponseQueryPageRevision struct {
-	Slots map[string]ResponseQueryPageRevisionSlot `json:"slots"`
-}
-
-type ResponseQueryPageRevisionSlot struct {
-	Content       string `json:"content"`
-	ContentModel  string `json:"contentmodel"`
-	ContentFormat string `json:"contentformat"`
+	Pages  []QueryResponseQueryPage `json:"pages"`
+	Tokens map[string]string        `json:"tokens"`
 }
 
 type ResponseWarnings struct {
