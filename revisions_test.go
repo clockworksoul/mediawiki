@@ -22,9 +22,9 @@ func TestRevisionsStandard(t *testing.T) {
 
 	require.NoError(t, err)
 	assert.Nil(t, r.Error)
-	// require.NotNil(t, r.Query)
-	// assert.Len(t, r.Query.Pages, 2)
-	// assert.NotEmpty(t, r.Query.Pages[1].Revisions[0].Slots["main"].Content)
+	require.NotNil(t, r.Query)
+	assert.Len(t, r.Query.Pages, 2)
+	assert.NotEmpty(t, r.Query.Pages[1].Revisions[0].Slots["main"].Content)
 
 	CompareJSON(t, r.RawJSON, r, false)
 }

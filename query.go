@@ -52,20 +52,22 @@ type QueryResponseQueryPageRevisionSlot struct {
 
 // Namespace and full page title (including all subpage levels).
 func (p QueryResponseQueryPage) FullPageName() string {
-	return p.Title
+	return strings.ReplaceAll(p.Title, "_", " ")
 }
 
 // Full page title (including all subpage levels) without the namespace.
 func (p QueryResponseQueryPage) PageName() string {
+	title := strings.ReplaceAll(p.Title, "_", " ")
+
 	if p.Namespace == NamespaceMain {
-		return p.Title
+		return title
 	}
 
-	if i := strings.Index(p.Title, ":"); i >= 0 {
-		return p.Title[i+1:]
+	if i := strings.Index(title, ":"); i >= 0 {
+		return title[i+1:]
 	}
 
-	return p.Title
+	return title
 }
 
 // Page title of the page in the immediately superior subpage level without the namespace. Would return Title/Foo on page Help:Title/Foo/Bar.
@@ -96,25 +98,29 @@ func (p QueryResponseQueryPage) SubPageName() string {
 
 // Full page name of the associated subject (e.g. article or file). Useful on talk pages.
 func (p QueryResponseQueryPage) ArticlePageName() string {
+	title := strings.ReplaceAll(p.Title, "_", " ")
+
 	switch {
 	case p.Namespace%2 == 0:
-		return p.Title
+		return title
 	case p.Namespace == NamespaceTalk:
-		return strings.Replace(p.Title, "Talk:", "", 1)
+		return strings.Replace(title, "Talk:", "", 1)
 	default:
-		return strings.Replace(p.Title, " talk:", ":", 1)
+		return strings.Replace(title, " talk:", ":", 1)
 	}
 }
 
 // Full page name of the associated talk page.
 func (p QueryResponseQueryPage) TalkPageName() string {
+	title := strings.ReplaceAll(p.Title, "_", " ")
+
 	switch {
 	case p.Namespace%2 == 1:
-		return p.Title
+		return title
 	case p.Namespace == 0:
-		return "Talk:" + p.Title
+		return "Talk:" + title
 	default:
-		return strings.Replace(p.Title, ":", " talk:", 1)
+		return strings.Replace(title, ":", " talk:", 1)
 	}
 }
 
