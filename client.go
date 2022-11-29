@@ -180,7 +180,9 @@ func (w *Client) BotLogin(ctx context.Context, username, password string) (Respo
 		"lgtoken":    token,
 	}
 
-	r, err := w.Post(ctx, v)
+	r := Response{}
+	j, err := w.PostInto(ctx, v, &r)
+	r.RawJSON = j
 	if err != nil {
 		return r, fmt.Errorf("error parsing response: %w", err)
 	}
@@ -194,68 +196,6 @@ func (w *Client) BotLogin(ctx context.Context, username, password string) (Respo
 	}
 
 	w.lastLoginTime = time.Now()
-
-	return r, nil
-}
-
-func (w *Client) Get(ctx context.Context, v Values) (Response, error) {
-	v["format"] = "json"
-
-	query := w.apiURL.String() + "?" + v.Encode()
-
-	fmt.Println(query)
-
-	req, err := http.NewRequestWithContext(ctx, "GET", query, nil)
-	if err != nil {
-		return Response{}, fmt.Errorf("error constructing GET: %w", err)
-	}
-
-	req.Header.Set("User-Agent", w.UserAgent)
-
-	// if w.Debug != nil {
-	// 	reqdump, err := httputil.DumpRequestOut(req, true)
-	// 	if err != nil {
-	// 		fmt.Fprintf(w.Debug, "Err dumping request: %v\n", err)
-	// 	} else {
-	// 		w.Debug.Write(reqdump)
-	// 	}
-	// }
-
-	resp, err := w.Client.Do(req)
-	if err != nil {
-		return Response{}, fmt.Errorf("error executing Get: %w", err)
-	}
-
-	// if w.Debug != nil {
-	// 	respdump, err := httputil.DumpResponse(resp, true)
-	// 	if err != nil {
-	// 		fmt.Fprintf(w.Debug, "Err dumping response: %v\n", err)
-	// 	} else {
-	// 		w.Debug.Write(respdump)
-	// 	}
-	// }
-
-	b, _ := io.ReadAll(resp.Body)
-	buf := &bytes.Buffer{}
-
-	if w.Debug != nil {
-		json.Indent(buf, b, "", "  ")
-		fmt.Fprintln(w.Debug, buf.String())
-	} else {
-		buf.Write(b)
-	}
-
-	r := Response{}
-	err = ParseResponseReader(buf, &r)
-	if err != nil {
-		return r, fmt.Errorf("error parsing response: %w", err)
-	}
-
-	if w.Debug != nil {
-		fmt.Fprintln(w.Debug, "-----")
-		b, _ = json.MarshalIndent(r, "", "  ")
-		fmt.Fprintln(w.Debug, string(b))
-	}
 
 	return r, nil
 }
@@ -276,28 +216,10 @@ func (w *Client) GetInto(ctx context.Context, v Values, a any) (string, error) {
 
 	req.Header.Set("User-Agent", w.UserAgent)
 
-	// if w.Debug != nil {
-	// 	reqdump, err := httputil.DumpRequestOut(req, true)
-	// 	if err != nil {
-	// 		fmt.Fprintf(w.Debug, "Err dumping request: %v\n", err)
-	// 	} else {
-	// 		w.Debug.Write(reqdump)
-	// 	}
-	// }
-
 	resp, err := w.Client.Do(req)
 	if err != nil {
 		return "", fmt.Errorf("error executing Get: %w", err)
 	}
-
-	// if w.Debug != nil {
-	// 	respdump, err := httputil.DumpResponse(resp, true)
-	// 	if err != nil {
-	// 		fmt.Fprintf(w.Debug, "Err dumping response: %v\n", err)
-	// 	} else {
-	// 		w.Debug.Write(respdump)
-	// 	}
-	// }
 
 	b, _ := io.ReadAll(resp.Body)
 	buf := &bytes.Buffer{}
@@ -320,49 +242,6 @@ func (w *Client) GetInto(ctx context.Context, v Values, a any) (string, error) {
 	}
 
 	return j, nil
-}
-
-func (w *Client) Post(ctx context.Context, v Values) (Response, error) {
-	v["format"] = "json"
-
-	req, err := http.NewRequestWithContext(ctx, "POST", w.apiURL.String(), strings.NewReader(v.Encode()))
-	if err != nil {
-		return Response{}, fmt.Errorf("error constructing POST: %w", err)
-	}
-
-	req.Header.Set("User-Agent", w.UserAgent)
-	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
-
-	// if w.Debug != nil {
-	// 	reqdump, err := httputil.DumpRequestOut(req, true)
-	// 	if err != nil {
-	// 		fmt.Fprintf(w.Debug, "Err dumping request: %v\n", err)
-	// 	} else {
-	// 		w.Debug.Write(reqdump)
-	// 	}
-	// }
-
-	resp, err := w.Client.Do(req)
-	if err != nil {
-		return Response{}, fmt.Errorf("error executing POST: %w", err)
-	}
-
-	// if w.Debug != nil {
-	// 	respdump, err := httputil.DumpResponse(resp, true)
-	// 	if err != nil {
-	// 		fmt.Fprintf(w.Debug, "Err dumping response: %v\n", err)
-	// 	} else {
-	// 		w.Debug.Write(respdump)
-	// 	}
-	// }
-
-	r := Response{}
-	err = ParseResponseReader(resp.Body, &r)
-	if err != nil {
-		return r, fmt.Errorf("error parsing response: %w", err)
-	}
-
-	return r, nil
 }
 
 func (w *Client) PostInto(ctx context.Context, v Values, a any) (string, error) {

@@ -96,7 +96,9 @@ func (w *Client) ClientLogin(ctx context.Context, username, password string, opt
 		v["loginreturnurl"] = fmt.Sprintf("%s://%s\n", w.apiURL.Scheme, w.apiURL.Host)
 	}
 
-	r, err := w.Post(ctx, v)
+	r := Response{}
+	j, err := w.PostInto(ctx, v, &r)
+	r.RawJSON = j
 	if err != nil {
 		return r, fmt.Errorf("error parsing response: %w", err)
 	}

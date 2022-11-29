@@ -16,7 +16,7 @@ type CoreResponse struct {
 type Response struct {
 	CoreResponse
 	RawJSON       string               `json:"-"`
-	BatchComplete interface{}          `json:"batchcomplete"`
+	BatchComplete any                  `json:"batchcomplete"`
 	BotLogin      *ResponseBotLogin    `json:"login"`
 	ClientLogin   *ResponseClientLogin `json:"clientlogin"`
 	Edit          *ResponseEdit        `json:"edit"`

@@ -44,7 +44,9 @@ func (w *Client) Login(ctx context.Context, username, password string, options .
 		o(v)
 	}
 
-	r, err := w.Post(ctx, v)
+	r := Response{}
+	j, err := w.PostInto(ctx, v, &r)
+	r.RawJSON = j
 	if err != nil {
 		return r, fmt.Errorf("error parsing response: %w", err)
 	}

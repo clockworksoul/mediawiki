@@ -16,7 +16,7 @@ func (w *Client) Protect(ctx context.Context, title, reason string) (Response, e
 	}
 
 	// Specify parameters to send.
-	parameters := map[string]string{
+	v := map[string]string{
 		"action":      "protect",
 		"title":       title,
 		"protections": "edit=sysop",
@@ -25,7 +25,9 @@ func (w *Client) Protect(ctx context.Context, title, reason string) (Response, e
 	}
 
 	// Make the request.
-	r, err := w.Post(ctx, parameters)
+	r := Response{}
+	j, err := w.PostInto(ctx, v, &r)
+	r.RawJSON = j
 	if err != nil {
 		return r, fmt.Errorf("failed to post: %w", err)
 	}
