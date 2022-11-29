@@ -8,14 +8,14 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestQueryUsersStandard(t *testing.T) {
+func TestUsersStandard(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
 	_, err = c.BotLogin(context.Background(), username, password)
 	require.NoError(t, err)
 
-	r, err := c.QueryUsers().Users("Mtitmus").Do(context.Background())
+	r, err := c.Users().Users("Mtitmus").Do(context.Background())
 
 	require.NoError(t, err)
 	require.Nil(t, r.Error)
@@ -28,14 +28,14 @@ func TestQueryUsersStandard(t *testing.T) {
 	CompareJSON(t, r.RawJSON, r, false)
 }
 
-func TestQueryUsersMissing(t *testing.T) {
+func TestUsersMissing(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
 	_, err = c.BotLogin(context.Background(), username, password)
 	require.NoError(t, err)
 
-	r, err := c.QueryUsers().Users("nosuchuser").Do(context.Background())
+	r, err := c.Users().Users("nosuchuser").Do(context.Background())
 
 	require.NoError(t, err)
 	require.Nil(t, r.Error)

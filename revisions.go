@@ -18,22 +18,22 @@ import (
 // * This module requires read rights.
 // * This module can be used as a generator.
 
-type QueryRevisionsResponse struct {
+type RevisionsResponse struct {
 	QueryResponse
 }
 
-type QueryRevisionsClient struct {
+type RevisionsClient struct {
 	o []QueryOption
 	c *Client
 }
 
 // WithQueryProp
 // Which properties to get for the queried pages.
-func (c *Client) QueryRevisions() *QueryRevisionsClient {
-	return &QueryRevisionsClient{c: c}
+func (c *Client) Revisions() *RevisionsClient {
+	return &RevisionsClient{c: c}
 }
 
-func (w *QueryRevisionsClient) Titles(s ...string) *QueryRevisionsClient {
+func (w *RevisionsClient) Titles(s ...string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["titles"] = strings.Join(s, "|")
 	})
@@ -41,7 +41,7 @@ func (w *QueryRevisionsClient) Titles(s ...string) *QueryRevisionsClient {
 }
 
 // Rvprop
-func (w *QueryRevisionsClient) Prop(s ...string) *QueryRevisionsClient {
+func (w *RevisionsClient) Prop(s ...string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvprop"] = strings.Join(s, "|")
 	})
@@ -52,7 +52,7 @@ func (w *QueryRevisionsClient) Prop(s ...string) *QueryRevisionsClient {
 // Which revision slots to return data for, when slot-related properties are included in rvprops. If omitted, data from the main slot will be returned in a backwards-compatible format.
 // Values (separate with | or alternative): main
 // To specify all values, use *.
-func (w *QueryRevisionsClient) Slots(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Slots(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvslots"] = s
 	})
@@ -63,7 +63,7 @@ func (w *QueryRevisionsClient) Slots(s string) *QueryRevisionsClient {
 // Limit how many revisions will be returned.
 // May only be used with a single page (mode #2).
 // The value must be between 1 and 500.
-func (w *QueryRevisionsClient) Limit(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Limit(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvlimit"] = s
 	})
@@ -72,7 +72,7 @@ func (w *QueryRevisionsClient) Limit(s string) *QueryRevisionsClient {
 
 // Rvexpandtemplates
 // Use action=expandtemplates instead. Expand templates in revision content (requires rvprop=content).
-func (w *QueryRevisionsClient) Expandtemplates(b bool) *QueryRevisionsClient {
+func (w *RevisionsClient) Expandtemplates(b bool) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvexpandtemplates"] = strconv.FormatBool(b)
 	})
@@ -81,7 +81,7 @@ func (w *QueryRevisionsClient) Expandtemplates(b bool) *QueryRevisionsClient {
 
 // Rvgeneratexml
 // Use action=expandtemplates or action=parse instead. Generate XML parse tree for revision content (requires rvprop=content).
-func (w *QueryRevisionsClient) Generatexml(b bool) *QueryRevisionsClient {
+func (w *RevisionsClient) Generatexml(b bool) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvgeneratexml"] = strconv.FormatBool(b)
 	})
@@ -90,7 +90,7 @@ func (w *QueryRevisionsClient) Generatexml(b bool) *QueryRevisionsClient {
 
 // Rvparse
 // Use action=parse instead. Parse revision content (requires rvprop=content). For performance reasons, if this option is used, rvlimit is enforced to 1.
-func (w *QueryRevisionsClient) Parse(b bool) *QueryRevisionsClient {
+func (w *RevisionsClient) Parse(b bool) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvparse"] = strconv.FormatBool(b)
 	})
@@ -99,7 +99,7 @@ func (w *QueryRevisionsClient) Parse(b bool) *QueryRevisionsClient {
 
 // Rvsection
 // Only retrieve the content of the section with this identifier.
-func (w *QueryRevisionsClient) Section(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Section(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvsection"] = s
 	})
@@ -108,7 +108,7 @@ func (w *QueryRevisionsClient) Section(s string) *QueryRevisionsClient {
 
 // Rvdiffto
 // Use action=compare instead. Revision ID to diff each revision to. Use prev, next and cur for the previous, next and current revision respectively.
-func (w *QueryRevisionsClient) Diffto(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Diffto(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvdiffto"] = s
 	})
@@ -117,7 +117,7 @@ func (w *QueryRevisionsClient) Diffto(s string) *QueryRevisionsClient {
 
 // Rvdifftotext
 // Use action=compare instead. Text to diff each revision to. Only diffs a limited number of revisions. Overrides rvdiffto. If rvsection is set, only that section will be diffed against this text.
-func (w *QueryRevisionsClient) Difftotext(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Difftotext(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvdifftotext"] = s
 	})
@@ -126,7 +126,7 @@ func (w *QueryRevisionsClient) Difftotext(s string) *QueryRevisionsClient {
 
 // Rvdifftotextpst
 // Use action=compare instead. Perform a pre-save transform on the text before diffing it. Only valid when used with rvdifftotext.
-func (w *QueryRevisionsClient) Difftotextpst(b bool) *QueryRevisionsClient {
+func (w *RevisionsClient) Difftotextpst(b bool) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvdifftotextpst"] = strconv.FormatBool(b)
 	})
@@ -136,7 +136,7 @@ func (w *QueryRevisionsClient) Difftotextpst(b bool) *QueryRevisionsClient {
 // Rvcontentformat
 // Serialization format used for rvdifftotext and expected for output of content.
 // One of the following values: application/json, application/octet-stream, application/unknown, application/x-binary, text/css, text/javascript, text/plain, text/unknown, text/x-wiki, unknown/unknown
-func (w *QueryRevisionsClient) Contentformat(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Contentformat(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvcontentformat"] = s
 	})
@@ -146,7 +146,7 @@ func (w *QueryRevisionsClient) Contentformat(s string) *QueryRevisionsClient {
 // Rvstartid
 // Start enumeration from this revision's timestamp. The revision must exist, but need not belong to this page.
 // May only be used with a single page (mode #2).
-func (w *QueryRevisionsClient) Startid(i int) *QueryRevisionsClient {
+func (w *RevisionsClient) Startid(i int) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvstartid"] = strconv.FormatInt(int64(i), 10)
 	})
@@ -156,7 +156,7 @@ func (w *QueryRevisionsClient) Startid(i int) *QueryRevisionsClient {
 // Rvendid
 // Stop enumeration at this revision's timestamp. The revision must exist, but need not belong to this page.
 // May only be used with a single page (mode #2).
-func (w *QueryRevisionsClient) Endid(i int) *QueryRevisionsClient {
+func (w *RevisionsClient) Endid(i int) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvendid"] = strconv.FormatInt(int64(i), 10)
 	})
@@ -166,7 +166,7 @@ func (w *QueryRevisionsClient) Endid(i int) *QueryRevisionsClient {
 // Rvstart
 // From which revision timestamp to start enumeration.
 // May only be used with a single page (mode #2).
-func (w *QueryRevisionsClient) Start(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Start(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvstart"] = s
 	})
@@ -176,7 +176,7 @@ func (w *QueryRevisionsClient) Start(s string) *QueryRevisionsClient {
 // Rvend
 // Enumerate up to this timestamp.
 // May only be used with a single page (mode #2).
-func (w *QueryRevisionsClient) End(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) End(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvend"] = s
 	})
@@ -184,7 +184,7 @@ func (w *QueryRevisionsClient) End(s string) *QueryRevisionsClient {
 }
 
 // Rvdir
-func (w *QueryRevisionsClient) Dir(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Dir(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvdir"] = s
 	})
@@ -194,7 +194,7 @@ func (w *QueryRevisionsClient) Dir(s string) *QueryRevisionsClient {
 // Rvuser
 // Only include revisions made by user.
 // May only be used with a single page (mode #2).
-func (w *QueryRevisionsClient) User(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) User(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvuser"] = s
 	})
@@ -204,7 +204,7 @@ func (w *QueryRevisionsClient) User(s string) *QueryRevisionsClient {
 // Rvexcludeuser
 // Exclude revisions made by user.
 // May only be used with a single page (mode #2).
-func (w *QueryRevisionsClient) Excludeuser(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Excludeuser(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvexcludeuser"] = s
 	})
@@ -213,7 +213,7 @@ func (w *QueryRevisionsClient) Excludeuser(s string) *QueryRevisionsClient {
 
 // Rvtag
 // Only list revisions tagged with this tag.
-func (w *QueryRevisionsClient) Tag(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Tag(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvtag"] = s
 	})
@@ -222,16 +222,16 @@ func (w *QueryRevisionsClient) Tag(s string) *QueryRevisionsClient {
 
 // Rvcontinue
 // When more results are available, use this to continue.
-func (w *QueryRevisionsClient) Continue(s string) *QueryRevisionsClient {
+func (w *RevisionsClient) Continue(s string) *RevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rvcontinue"] = s
 	})
 	return w
 }
 
-func (w *QueryRevisionsClient) Do(ctx context.Context) (QueryRevisionsResponse, error) {
+func (w *RevisionsClient) Do(ctx context.Context) (RevisionsResponse, error) {
 	if err := w.c.checkKeepAlive(ctx); err != nil {
-		return QueryRevisionsResponse{}, err
+		return RevisionsResponse{}, err
 	}
 
 	// Specify parameters to send.
@@ -248,7 +248,7 @@ func (w *QueryRevisionsClient) Do(ctx context.Context) (QueryRevisionsResponse, 
 	}
 
 	// Make the request.
-	r := QueryRevisionsResponse{}
+	r := RevisionsResponse{}
 	j, err := w.c.GetInto(ctx, parameters, &r)
 	r.RawJSON = j
 	if err != nil {

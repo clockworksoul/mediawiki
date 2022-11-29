@@ -12,35 +12,35 @@ import (
 // Flags:
 // * This module requires read rights.
 
-// QueryUsers
-type QueryUsersOption func(map[string]string)
+// Users
+type UsersOption func(map[string]string)
 
-type QueryUsersResponse struct {
+type UsersResponse struct {
 	QueryResponse
-	Query *QueryUsersQuery `json:"query,omitempty"`
+	Query *UsersQuery `json:"query,omitempty"`
 }
 
-type QueryUsersQuery struct {
-	Users []QueryUsersResponseUser `json:"users"`
+type UsersQuery struct {
+	Users []UsersResponseUser `json:"users"`
 }
 
-type QueryUsersResponseUser struct {
+type UsersResponseUser struct {
 	UserId  int    `json:"userid,omitempty"`
 	Name    string `json:"name,omitempty"`
 	Missing any    `json:"missing,omitempty"`
 }
 
-type QueryUsersClient struct {
+type UsersClient struct {
 	o []QueryOption
 	c *Client
 }
 
-func (c *Client) QueryUsers() *QueryUsersClient {
-	return &QueryUsersClient{c: c}
+func (c *Client) Users() *UsersClient {
+	return &UsersClient{c: c}
 }
 
 // Usprop
-func (w *QueryUsersClient) Prop(s ...string) *QueryUsersClient {
+func (w *UsersClient) Prop(s ...string) *UsersClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["usprop"] = strings.Join(s, "|")
 	})
@@ -49,7 +49,7 @@ func (w *QueryUsersClient) Prop(s ...string) *QueryUsersClient {
 
 // Usattachedwiki
 // With usprop=centralids, indicate whether the user is attached with the wiki identified by this ID.
-func (w *QueryUsersClient) Attachedwiki(s string) *QueryUsersClient {
+func (w *UsersClient) Attachedwiki(s string) *UsersClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["usattachedwiki"] = s
 	})
@@ -60,7 +60,7 @@ func (w *QueryUsersClient) Attachedwiki(s string) *QueryUsersClient {
 // A list of users to obtain information for.
 // Separate values with | or alternative.
 // Maximum number of values is 50 (500 for clients allowed higher limits).
-func (w *QueryUsersClient) Users(s ...string) *QueryUsersClient {
+func (w *UsersClient) Users(s ...string) *UsersClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["ususers"] = strings.Join(s, "|")
 	})
@@ -71,7 +71,7 @@ func (w *QueryUsersClient) Users(s ...string) *QueryUsersClient {
 // A list of user IDs to obtain information for.
 // Separate values with | or alternative.
 // Maximum number of values is 50 (500 for clients allowed higher limits).
-func (w *QueryUsersClient) Userids(i ...int) *QueryUsersClient {
+func (w *UsersClient) Userids(i ...int) *UsersClient {
 	w.o = append(w.o, func(m map[string]string) {
 		var s []string
 
@@ -84,9 +84,9 @@ func (w *QueryUsersClient) Userids(i ...int) *QueryUsersClient {
 	return w
 }
 
-func (w *QueryUsersClient) Do(ctx context.Context) (QueryUsersResponse, error) {
+func (w *UsersClient) Do(ctx context.Context) (UsersResponse, error) {
 	if err := w.c.checkKeepAlive(ctx); err != nil {
-		return QueryUsersResponse{}, err
+		return UsersResponse{}, err
 	}
 
 	// Specify parameters to send.
@@ -100,7 +100,7 @@ func (w *QueryUsersClient) Do(ctx context.Context) (QueryUsersResponse, error) {
 	}
 
 	// Make the request.
-	r := QueryUsersResponse{}
+	r := UsersResponse{}
 	j, err := w.c.PostInto(ctx, parameters, &r)
 	r.RawJSON = j
 	if err != nil {
@@ -109,8 +109,6 @@ func (w *QueryUsersClient) Do(ctx context.Context) (QueryUsersResponse, error) {
 
 	if e := r.Error; e != nil {
 		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
-		// } else if r.QueryUsers == nil {
-		// 	return r, fmt.Errorf("unexpected error in queryusers")
 	}
 
 	return r, nil

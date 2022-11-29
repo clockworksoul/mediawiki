@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestQueryRevisionsStandard(t *testing.T) {
+func TestRevisionsStandard(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
@@ -16,7 +16,7 @@ func TestQueryRevisionsStandard(t *testing.T) {
 	require.NoError(t, err)
 
 	r, err :=
-		c.QueryRevisions().
+		c.Revisions().
 			Titles("Main_Page", "Help:Introduction to Yextipedia").
 			Do(context.Background())
 
@@ -29,14 +29,14 @@ func TestQueryRevisionsStandard(t *testing.T) {
 	CompareJSON(t, r.RawJSON, r, false)
 }
 
-func TestQueryRevisionsWarning(t *testing.T) {
+func TestRevisionsWarning(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
 	_, err = c.BotLogin(context.Background(), username, password)
 	require.NoError(t, err)
 
-	r, err := c.QueryRevisions().Do(context.Background())
+	r, err := c.Revisions().Do(context.Background())
 	require.NoError(t, err)
 	assert.Nil(t, r.Error)
 
