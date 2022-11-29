@@ -9,6 +9,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -35,7 +36,7 @@ type UploadResponse struct {
 type UploadUploadResponse struct {
 	Filename   string                 `json:"filename,omitempty"`
 	Imageinfo  *UploadUploadImageinfo `json:"imageinfo,omitempty"`
-	Result     string                 `json:"result,omitempty"`
+	Result     Result                 `json:"result,omitempty"`
 	Warnings   *UploadUploadWarnings  `json:"warnings,omitempty"`
 	FileKey    string                 `json:"filekey,omitempty"`
 	SessionKey string                 `json:"sessionkey,omitempty"`
@@ -63,9 +64,9 @@ type UploadUploadImageinfo struct {
 	Descriptionurl string   `json:"descriptionurl,omitempty"`
 	Extmetadata    struct {
 		DateTime *struct {
-			Value  time.Time `json:"value,omitempty"`
-			Source string    `json:"source,omitempty"`
-			Hidden any       `json:"hidden,omitempty"`
+			Value  *time.Time `json:"value,omitempty"`
+			Source string     `json:"source,omitempty"`
+			Hidden any        `json:"hidden,omitempty"`
 		} `json:"DateTime,omitempty"`
 		ObjectName *struct {
 			Value  string `json:"value,omitempty"`
@@ -80,15 +81,15 @@ type UploadUploadImageinfo struct {
 		Name  string `json:"name,omitempty"`
 		Value int    `json:"value,omitempty"`
 	} `json:"metadata,omitempty"`
-	Mime          string    `json:"mime,omitempty"`
-	Parsedcomment string    `json:"parsedcomment"`
-	Sha1          string    `json:"sha1,omitempty"`
-	Size          int       `json:"size,omitempty"`
-	Timestamp     time.Time `json:"timestamp,omitempty"`
-	URL           string    `json:"url,omitempty"`
-	User          string    `json:"user,omitempty"`
-	Userid        int       `json:"userid,omitempty"`
-	Width         int       `json:"width,omitempty"`
+	Mime          string     `json:"mime,omitempty"`
+	Parsedcomment string     `json:"parsedcomment"`
+	Sha1          string     `json:"sha1,omitempty"`
+	Size          int        `json:"size,omitempty"`
+	Timestamp     *time.Time `json:"timestamp,omitempty"`
+	URL           string     `json:"url,omitempty"`
+	User          string     `json:"user,omitempty"`
+	Userid        int        `json:"userid,omitempty"`
+	Width         int        `json:"width,omitempty"`
 }
 
 type UploadOption func(map[string]string)
@@ -125,9 +126,9 @@ func (w *UploadClient) Comment(s string) *UploadClient {
 // Tags
 // Change tags to apply to the upload log entry and file page revision.
 // Values (separate with | or alternative): possible vandalism, repeating characters
-func (w *UploadClient) Tags(s string) *UploadClient {
+func (w *UploadClient) Tags(s ...string) *UploadClient {
 	w.o = append(w.o, func(m map[string]string) {
-		m["tags"] = s
+		m["tags"] = strings.Join(s, "|")
 	})
 	return w
 }
@@ -358,7 +359,7 @@ func (w *UploadClient) Do(ctx context.Context) (UploadResponse, error) {
 		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
 	} else if r.Upload == nil {
 		return r, fmt.Errorf("unexpected error in upload")
-	} else if r.Upload.Result != "Success" && r.Upload.Result != "Warning" {
+	} else if r.Upload.Result != Success && r.Upload.Result != Warning {
 		return r, fmt.Errorf("upload failure")
 	}
 

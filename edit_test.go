@@ -24,7 +24,7 @@ func TestEditGood(t *testing.T) {
 	require.NoError(t, err)
 	assert.Nil(t, r.Error)
 	require.NotNil(t, r.Edit)
-	assert.Equal(t, "Success", r.Edit.Result)
+	assert.Equal(t, Success, r.Edit.Result)
 
 	CompareJSON(t, r.RawJSON, r, false)
 }
@@ -58,14 +58,14 @@ func TestEditRepeated(t *testing.T) {
 	assert.Nil(t, r.Error)
 	require.NotNil(t, r.Edit)
 	assert.Nil(t, r.Edit.NoChange)
-	assert.Equal(t, "Success", r.Edit.Result)
+	assert.Equal(t, Success, r.Edit.Result)
 
 	r, err = c.Edit().Title("TestMediawikiEditRepeated").Text(text).Summary("Automated test.").Watchlist("unwatch").Do(context.Background())
 	require.NoError(t, err)
 	assert.Nil(t, r.Error)
 	require.NotNil(t, r.Edit)
 	assert.NotNil(t, r.Edit.NoChange)
-	assert.Equal(t, "Success", r.Edit.Result)
+	assert.Equal(t, Success, r.Edit.Result)
 
 	CompareJSON(t, r.RawJSON, r, false)
 }

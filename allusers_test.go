@@ -16,7 +16,6 @@ func TestAllusersStandard(t *testing.T) {
 	require.NoError(t, err)
 
 	r, err := c.Allusers().Do(context.Background())
-
 	require.NoError(t, err)
 	require.Nil(t, r.Error)
 	assert.NotEmpty(t, r.Query.Allusers)
@@ -35,11 +34,10 @@ func TestAllusersContinue(t *testing.T) {
 	require.NoError(t, err)
 
 	r, err := c.Allusers().Limit(1).Do(context.Background())
-
 	require.NoError(t, err)
 	require.Nil(t, r.Error)
 	assert.Len(t, r.Query.Allusers, 1)
 	assert.NotEmpty(t, r.Continue.Continue)
 
-	CompareJSON(t, r.RawJSON, r, true)
+	CompareJSON(t, r.RawJSON, r, false)
 }

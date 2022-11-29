@@ -52,14 +52,22 @@ type ResponseClientLogin struct {
 	MessageCode string `json:"messagecode"`
 }
 
+type Result string
+
+const (
+	Error   Result = "Error"
+	Success Result = "Success"
+	Warning Result = "Warning"
+)
+
 type ResponseBotLogin struct {
-	Result   string `json:"result"`
+	Result   Result `json:"result"`
 	UserId   int    `json:"lguserid"`
 	UserName string `json:"lgusername"`
 }
 
 type ResponseEdit struct {
-	Result       string    `json:"result"`
+	Result       Result    `json:"result"`
 	PageId       int       `json:"pageid"`
 	Title        string    `json:"title"`
 	ContentModel string    `json:"contentmodel"`

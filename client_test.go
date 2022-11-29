@@ -35,7 +35,7 @@ func TestClientBotLogin(t *testing.T) {
 	r, err := c.BotLogin(context.Background(), username, password)
 	require.NoError(t, err)
 	require.NotNil(t, r.BotLogin)
-	assert.Equal(t, "Success", r.BotLogin.Result)
+	assert.Equal(t, Success, r.BotLogin.Result)
 }
 
 func TestClientParseResponse(t *testing.T) {
@@ -85,7 +85,7 @@ func TestClientProtect(t *testing.T) {
 	require.NoError(t, err)
 	assert.Nil(t, r.Error)
 	require.NotNil(t, r.Edit)
-	assert.Equal(t, "Success", r.Edit.Result)
+	assert.Equal(t, Success, r.Edit.Result)
 
 	r2, err := c.Protect(context.Background(), "Protection test", "This is a test")
 	require.NoError(t, err)

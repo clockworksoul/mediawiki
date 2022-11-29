@@ -48,7 +48,23 @@ import (`)
 	name := strings.ReplaceAll(caser.String(m.Name), "+", "")
 
 	fmt.Fprintln(b, "//", name)
-	fmt.Fprintf(b, "type %sOption func(map[string]string)\n\n", name)
+	fmt.Fprintf(b, `
+type %sResponse struct {
+ 	CoreResponse
+}
+
+type %sOption func(map[string]string)
+
+type %sClient struct {
+	o []%sOption
+	c *Client
+}
+
+func (c *Client) %s() *%sClient {
+	return &%sClient{c: c}
+}
+
+`, name, name, name, name, name, name, name)
 
 	for _, p := range m.Parameters {
 		if p.Name == "*" {
@@ -63,6 +79,12 @@ import (`)
 			fmt.Fprintln(b, writeIntegerParameter(m, p))
 		case Expiry, String:
 			fmt.Fprintln(b, writeStringParameter(m, p))
+		case ListOfStrings:
+			fmt.Fprintln(b, writeVariadicStringParameter(m, p))
+		case ListOfIntegers:
+			fmt.Fprintln(b, writeVariadicIntParameter(m, p))
+		case Timestamp:
+			fmt.Fprintln(b, writeTimestampParameter(m, p))
 		default:
 			return "", fmt.Errorf("unsupported parameter type for parameter %s: %s", p.Name, p.Type)
 		}
@@ -123,6 +145,13 @@ func gatherImports(mod Module) ([]string, error) {
 		case Integer:
 			m["strconv"] = true
 		case Expiry, String:
+		case ListOfIntegers:
+			m["strconv"] = true
+			m["strings"] = true
+		case ListOfStrings:
+			m["strings"] = true
+		case Timestamp:
+			m["time"] = true
 		default:
 			return nil, fmt.Errorf("unsupported parameter type for parameter %s: %s", p.Name, p.Type)
 		}
@@ -194,6 +223,67 @@ func writeStringParameter(m Module, p *Param) string {
 	fmt.Fprintf(b, `func (w *%sClient) %s(s string) *%sClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["%s"] = s
+	})
+	return w
+}
+`, mn, pn, mn, p.Name)
+
+	return b.String()
+}
+
+func writeTimestampParameter(m Module, p *Param) string {
+	b := &bytes.Buffer{}
+	mn := caser.String(m.Name)
+	pn := caser.String(p.Name)
+
+	fmt.Fprint(b, writeHeaders(m, p))
+
+	fmt.Fprintf(b, `func (w *%sClient) %s(t time.Time) *%sClient {
+	w.o = append(w.o, func(m map[string]string) {
+		m["%s"] = t.Format("2006-01-02T15:04:05Z")
+	})
+	return w
+}
+`, mn, pn, mn, p.Name)
+
+	return b.String()
+}
+
+func writeVariadicIntParameter(m Module, p *Param) string {
+	b := &bytes.Buffer{}
+	mn := caser.String(m.Name)
+	pn := caser.String(p.Name)
+
+	fmt.Fprint(b, writeHeaders(m, p))
+
+	fmt.Fprintf(b, `func (w *%sClient) %s(i ...int) *%sClient {
+		w.o = append(w.o, func(m map[string]string) {
+			var s []string
+	
+			for _, n := range i {
+				s = append(s, strconv.FormatInt(int64(n), 10))
+			}
+	
+			m["%s"] = strings.Join(s, "|")
+		})
+		return w
+	}
+}
+`, mn, pn, mn, p.Name)
+
+	return b.String()
+}
+
+func writeVariadicStringParameter(m Module, p *Param) string {
+	b := &bytes.Buffer{}
+	mn := caser.String(m.Name)
+	pn := caser.String(p.Name)
+
+	fmt.Fprint(b, writeHeaders(m, p))
+
+	fmt.Fprintf(b, `func (w *%sClient) %s(s ...string) *%sClient {
+	w.o = append(w.o, func(m map[string]string) {
+		m["%s"] = strings.Join(s, "|")
 	})
 	return w
 }

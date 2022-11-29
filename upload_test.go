@@ -16,8 +16,6 @@ func TestUploadGood(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)
 
-	// c.Debug = os.Stdout
-
 	_, err = c.BotLogin(context.Background(), username, password)
 	require.NoError(t, err)
 
@@ -111,7 +109,7 @@ func TestUploadWarning(t *testing.T) {
 	r, err = c.Upload().Filename(name2).File(f).Do(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, r.Upload)
-	require.Equal(t, "Warning", r.Upload.Result)
+	require.Equal(t, Warning, r.Upload.Result)
 
 	// Trick for forcing embedded HTML to use consistent encoding
 	var i any
@@ -119,4 +117,19 @@ func TestUploadWarning(t *testing.T) {
 	b, _ := json.MarshalIndent(i, "", "  ")
 
 	CompareJSON(t, string(b), r, false)
+}
+
+func TestUploadNothing(t *testing.T) {
+	c, err := New(apiUrl, agent)
+	require.NoError(t, err)
+
+	_, err = c.BotLogin(context.Background(), username, password)
+	require.NoError(t, err)
+
+	r, err := c.Upload().Do(context.Background())
+	require.Error(t, err)
+	assert.NotNil(t, r.Error)
+	require.Nil(t, r.Upload)
+
+	CompareJSON(t, r.RawJSON, r, false)
 }

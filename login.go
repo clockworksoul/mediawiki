@@ -55,7 +55,7 @@ func (w *Client) Login(ctx context.Context, username, password string, options .
 		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
 	} else if r.BotLogin == nil {
 		return r, fmt.Errorf("unexpected error in login")
-	} else if r.BotLogin.Result != "Success" {
+	} else if r.BotLogin.Result != Success {
 		return r, fmt.Errorf("login %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.MessageCode, r.ClientLogin.Message)
 	}
 

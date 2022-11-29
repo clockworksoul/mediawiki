@@ -13,7 +13,7 @@ type EditResponse struct {
 }
 
 type EditEditResponse struct {
-	Result       string     `json:"result"`
+	Result       Result     `json:"result"`
 	PageId       int        `json:"pageid"`
 	Title        string     `json:"title"`
 	ContentModel string     `json:"contentmodel"`
@@ -365,7 +365,7 @@ func (w *EditClient) Do(ctx context.Context) (EditResponse, error) {
 		return r, fmt.Errorf("%s: %s", e.Code, e.Info)
 	} else if r.Edit == nil {
 		return r, fmt.Errorf("unexpected error in edit")
-	} else if r.Edit.Result != "Success" {
+	} else if r.Edit.Result != Success {
 		return r, fmt.Errorf("write %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.MessageCode, r.ClientLogin.Message)
 	}
 

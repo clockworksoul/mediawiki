@@ -98,6 +98,8 @@ func parseModulePage(r io.ReadCloser) (Module, error) {
 					p.Deprecated = true
 				case strings.Contains(s, "equired"):
 					p.Required = true
+				case strings.Contains(s, "separate with |"):
+					p.Type = ListOfStrings
 				case strings.HasPrefix(s, "Type: "):
 					s := s[6:]
 					if i := strings.Index(s, " ("); i != -1 {
@@ -111,8 +113,12 @@ func parseModulePage(r io.ReadCloser) (Module, error) {
 						p.Type = Expiry
 					case "integer":
 						p.Type = Integer
+					case "timestamp":
+						p.Type = Timestamp
+					case "list of integers":
+						p.Type = ListOfIntegers
 					default:
-						fmt.Printf("Warning: Unhandled type for parameter %s: %s", p.Name, s)
+						fmt.Printf("Warning: Unhandled type for parameter %s: %s\n", p.Name, s)
 						continue
 						// return Module{}, fmt.Errorf("unhandled type for parameter %s: %s", p.Name, s)
 					}
