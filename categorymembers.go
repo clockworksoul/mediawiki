@@ -6,64 +6,64 @@ import (
 	"strconv"
 )
 
-type QueryCategoryMembers struct {
+type CategoryMembers struct {
 	QueryResponse
-	BatchComplete string                        `json:"batchcomplete"`
-	Continue      *QueryCategoryMembersContinue `json:"continue,omitempty"`
-	Query         *QueryCategoryMembersQuery    `json:"query"`
+	BatchComplete string                   `json:"batchcomplete"`
+	Continue      *CategoryMembersContinue `json:"continue,omitempty"`
+	Query         *CategoryMembersQuery    `json:"query"`
 }
 
-type QueryCategoryMembersQuery struct {
+type CategoryMembersQuery struct {
 	CategoryMembers []QueryResponseQueryPage `json:"categorymembers"`
 }
 
-type QueryCategoryMembersContinue struct {
+type CategoryMembersContinue struct {
 	CmContinue string `json:"cmcontinue"`
 	Continue   string `json:"continue"`
 }
 
-type QueryCategoryMembersClient struct {
+type CategoryMembersClient struct {
 	o []QueryOption
 	c *Client
 }
 
 // WithQueryProp
 // Which properties to get for the queried pages.
-func (c *Client) QueryCategoryMembers() *QueryCategoryMembersClient {
-	return &QueryCategoryMembersClient{c: c}
+func (c *Client) CategoryMembers() *CategoryMembersClient {
+	return &CategoryMembersClient{c: c}
 }
 
-func (w *QueryCategoryMembersClient) Title(s string) *QueryCategoryMembersClient {
+func (w *CategoryMembersClient) Title(s string) *CategoryMembersClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["cmtitle"] = s
 	})
 	return w
 }
 
-func (w *QueryCategoryMembersClient) PageId(i int) *QueryCategoryMembersClient {
+func (w *CategoryMembersClient) PageId(i int) *CategoryMembersClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["cmpageid"] = strconv.FormatInt(int64(i), 10)
 	})
 	return w
 }
 
-func (w *QueryCategoryMembersClient) Continue(s string) *QueryCategoryMembersClient {
+func (w *CategoryMembersClient) Continue(s string) *CategoryMembersClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["cmcontinue"] = s
 	})
 	return w
 }
 
-func (w *QueryCategoryMembersClient) Limit(i int) *QueryCategoryMembersClient {
+func (w *CategoryMembersClient) Limit(i int) *CategoryMembersClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["cmlimit"] = strconv.FormatInt(int64(i), 10)
 	})
 	return w
 }
 
-func (w *QueryCategoryMembersClient) Do(ctx context.Context) (QueryCategoryMembers, error) {
+func (w *CategoryMembersClient) Do(ctx context.Context) (CategoryMembers, error) {
 	if err := w.c.checkKeepAlive(ctx); err != nil {
-		return QueryCategoryMembers{}, err
+		return CategoryMembers{}, err
 	}
 
 	// Specify parameters to send.
@@ -77,7 +77,7 @@ func (w *QueryCategoryMembersClient) Do(ctx context.Context) (QueryCategoryMembe
 	}
 
 	// Make the request.
-	r := QueryCategoryMembers{}
+	r := CategoryMembers{}
 	j, err := w.c.GetInto(ctx, parameters, &r)
 	r.RawJSON = j
 	if err != nil {

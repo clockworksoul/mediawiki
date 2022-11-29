@@ -20,6 +20,7 @@ import (
 
 type RevisionsResponse struct {
 	QueryResponse
+	Query *QueryResponseQuery `json:"query,omitempty"`
 }
 
 type RevisionsClient struct {

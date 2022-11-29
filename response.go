@@ -16,20 +16,25 @@ type CoreResponse struct {
 type Response struct {
 	CoreResponse
 	RawJSON       string               `json:"-"`
-	BatchComplete any                  `json:"batchcomplete"`
-	BotLogin      *ResponseBotLogin    `json:"login"`
-	ClientLogin   *ResponseClientLogin `json:"clientlogin"`
-	Edit          *ResponseEdit        `json:"edit"`
-	Query         *ResponseQuery       `json:"query"`
-	Upload        *ResponseUpload      `json:"upload"`
-	Warnings      *ResponseWarnings    `json:"warnings"`
+	BatchComplete any                  `json:"batchcomplete,omitempty"`
+	BotLogin      *ResponseBotLogin    `json:"login,omitempty"`
+	ClientLogin   *ResponseClientLogin `json:"clientlogin,omitempty"`
+	Edit          *ResponseEdit        `json:"edit,omitempty"`
+	Query         *ResponseQuery       `json:"query,omitempty"`
+	Warnings      *ResponseWarnings    `json:"warnings,omitempty"`
 }
 
 type ResponseError struct {
-	Code   string `json:"code,omitempty"`
-	Docref string `json:"docref,omitempty"`
-	Info   string `json:"info,omitempty"`
-	Star   string `json:"*,omitempty"`
+	Code        string `json:"code,omitempty"`
+	Docref      string `json:"docref,omitempty"`
+	Info        string `json:"info,omitempty"`
+	Stasherrors []struct {
+		Message string   `json:"message,omitempty"`
+		Params  []string `json:"params,omitempty"`
+		Code    string   `json:"code,omitempty"`
+		Type    string   `json:"type,omitempty"`
+	} `json:"stasherrors,omitempty"`
+	Star string `json:"*,omitempty"`
 }
 
 type ResponseQuery struct {
@@ -62,12 +67,6 @@ type ResponseEdit struct {
 	NewRevId     int       `json:"newrevid,omitempty"`
 	NewTimestamp time.Time `json:"newtimestamp,omitempty"`
 	Watched      string    `json:"watched"`
-}
-
-type ResponseUpload struct {
-	Filename string            `json:"filename"`
-	Result   string            `json:"result"`
-	Warnings *ResponseWarnings `json:"warnings"`
 }
 
 func ParseResponseReader(in io.Reader, v any) error {

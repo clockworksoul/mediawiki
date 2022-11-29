@@ -7,40 +7,40 @@ import (
 	"strings"
 )
 
-type QueryCategoryInfoResponse struct {
+type CategoryInfoResponse struct {
 	QueryResponse
-	Query *QueryCategoryInfoResponseQuery `json:"query,omitempty"`
+	Query *CategoryInfoResponseQuery `json:"query,omitempty"`
 }
 
-type QueryCategoryInfoResponseQuery struct {
+type CategoryInfoResponseQuery struct {
 	QueryResponseQuery
 	Pages map[string]QueryResponseQueryPage `json:"pages"`
 }
 
-type QueryCategoryInfoResponsePage struct {
+type CategoryInfoResponsePage struct {
 	QueryResponseQueryPage
-	CategoryInfo map[string]QueryCategoryInfoResponsePagesCategoryInfo `json:"categoryinfo,omitempty"`
+	CategoryInfo map[string]CategoryInfoResponsePagesCategoryInfo `json:"categoryinfo,omitempty"`
 }
 
-type QueryCategoryInfoResponsePagesCategoryInfo struct {
+type CategoryInfoResponsePagesCategoryInfo struct {
 	Files   int `json:"files"`
 	Pages   int `json:"pages"`
 	Size    int `json:"size"`
 	Subcats int `json:"subcats"`
 }
 
-type QueryCategoryinfoClient struct {
+type CategoryinfoClient struct {
 	o []QueryOption
 	c *Client
 }
 
-func (c *Client) QueryCategoryInfo() *QueryCategoryinfoClient {
-	return &QueryCategoryinfoClient{c: c}
+func (c *Client) CategoryInfo() *CategoryinfoClient {
+	return &CategoryinfoClient{c: c}
 }
 
 // WithQueryProp
 // Which properties to get for the queried pages.
-func (w *QueryCategoryinfoClient) Prop(s ...string) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Prop(s ...string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["prop"] = strings.Join(s, "|")
 	})
@@ -49,7 +49,7 @@ func (w *QueryCategoryinfoClient) Prop(s ...string) *QueryCategoryinfoClient {
 
 // WithQueryList
 // Which lists to get.
-func (w *QueryCategoryinfoClient) List(s ...string) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) List(s ...string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["prop"] = strings.Join(s, "|")
 	})
@@ -58,7 +58,7 @@ func (w *QueryCategoryinfoClient) List(s ...string) *QueryCategoryinfoClient {
 
 // WithQueryMeta
 // Which metadata to get.
-func (w *QueryCategoryinfoClient) Meta(s ...string) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Meta(s ...string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["meta"] = strings.Join(s, "|")
 	})
@@ -67,7 +67,7 @@ func (w *QueryCategoryinfoClient) Meta(s ...string) *QueryCategoryinfoClient {
 
 // WithQueryIndexpageids
 // Include an additional pageids section listing all returned page IDs.
-func (w *QueryCategoryinfoClient) Indexpageids(b bool) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Indexpageids(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["indexpageids"] = strconv.FormatBool(b)
 	})
@@ -76,7 +76,7 @@ func (w *QueryCategoryinfoClient) Indexpageids(b bool) *QueryCategoryinfoClient 
 
 // WithQueryExport
 // Export the current revisions of all given or generated pages.
-func (w *QueryCategoryinfoClient) Export(b bool) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Export(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["export"] = strconv.FormatBool(b)
 	})
@@ -85,7 +85,7 @@ func (w *QueryCategoryinfoClient) Export(b bool) *QueryCategoryinfoClient {
 
 // WithQueryExportnowrap
 // Return the export XML without wrapping it in an XML result (same format as Special:Export). Can only be used with query+export.
-func (w *QueryCategoryinfoClient) Exportnowrap(b bool) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Exportnowrap(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["exportnowrap"] = strconv.FormatBool(b)
 	})
@@ -96,7 +96,7 @@ func (w *QueryCategoryinfoClient) Exportnowrap(b bool) *QueryCategoryinfoClient 
 // Target the given version of the XML dump format when exporting. Can only be used with query+export.
 // One of the following values: 0.10, 0.11
 // Default: 0.10
-func (w *QueryCategoryinfoClient) Exportschema(s string) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Exportschema(s string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["exportschema"] = s
 	})
@@ -105,7 +105,7 @@ func (w *QueryCategoryinfoClient) Exportschema(s string) *QueryCategoryinfoClien
 
 // WithQueryIwurl
 // Whether to get the full URL if the title is an interwiki link.
-func (w *QueryCategoryinfoClient) Iwurl(b bool) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Iwurl(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["iwurl"] = strconv.FormatBool(b)
 	})
@@ -114,7 +114,7 @@ func (w *QueryCategoryinfoClient) Iwurl(b bool) *QueryCategoryinfoClient {
 
 // WithQueryContinue
 // When more results are available, use this to continue.
-func (w *QueryCategoryinfoClient) Continue(s string) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Continue(s string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["continue"] = s
 	})
@@ -123,7 +123,7 @@ func (w *QueryCategoryinfoClient) Continue(s string) *QueryCategoryinfoClient {
 
 // WithQueryRawcontinue
 // Return raw query-continue data for continuation.
-func (w *QueryCategoryinfoClient) Rawcontinue(b bool) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Rawcontinue(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["rawcontinue"] = strconv.FormatBool(b)
 	})
@@ -134,7 +134,7 @@ func (w *QueryCategoryinfoClient) Rawcontinue(b bool) *QueryCategoryinfoClient {
 // A list of titles to work on.
 // Separate values with | or alternative.
 // Maximum number of values is 50 (500 for clients allowed higher limits).
-func (w *QueryCategoryinfoClient) Titles(s string) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Titles(s string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["titles"] = s
 	})
@@ -145,7 +145,7 @@ func (w *QueryCategoryinfoClient) Titles(s string) *QueryCategoryinfoClient {
 // A list of page IDs to work on.
 // Separate values with | or alternative.
 // Maximum number of values is 50 (500 for clients allowed higher limits).
-func (w *QueryCategoryinfoClient) Pageids(s string) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Pageids(s string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["pageids"] = s
 	})
@@ -156,7 +156,7 @@ func (w *QueryCategoryinfoClient) Pageids(s string) *QueryCategoryinfoClient {
 // A list of revision IDs to work on.
 // Separate values with | or alternative.
 // Maximum number of values is 50 (500 for clients allowed higher limits).
-func (w *QueryCategoryinfoClient) Revids(s string) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Revids(s string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["revids"] = s
 	})
@@ -164,7 +164,7 @@ func (w *QueryCategoryinfoClient) Revids(s string) *QueryCategoryinfoClient {
 }
 
 // WithQueryGenerator
-func (w *QueryCategoryinfoClient) Generator(s string) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Generator(s string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["generator"] = s
 	})
@@ -173,7 +173,7 @@ func (w *QueryCategoryinfoClient) Generator(s string) *QueryCategoryinfoClient {
 
 // WithQueryRedirects
 // Automatically resolve redirects in query+titles, query+pageids, and query+revids, and in pages returned by query+generator.
-func (w *QueryCategoryinfoClient) Redirects(b bool) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Redirects(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["redirects"] = strconv.FormatBool(b)
 	})
@@ -182,16 +182,16 @@ func (w *QueryCategoryinfoClient) Redirects(b bool) *QueryCategoryinfoClient {
 
 // WithQueryConverttitles
 // Convert titles to other variants if necessary. Only works if the wiki's content language supports variant conversion. Languages that support variant conversion include ban, en, crh, gan, iu, kk, ku, shi, sr, tg, uz and zh.
-func (w *QueryCategoryinfoClient) Converttitles(b bool) *QueryCategoryinfoClient {
+func (w *CategoryinfoClient) Converttitles(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["converttitles"] = strconv.FormatBool(b)
 	})
 	return w
 }
 
-func (w *QueryCategoryinfoClient) Do(ctx context.Context) (QueryCategoryInfoResponse, error) {
+func (w *CategoryinfoClient) Do(ctx context.Context) (CategoryInfoResponse, error) {
 	if err := w.c.checkKeepAlive(ctx); err != nil {
-		return QueryCategoryInfoResponse{}, err
+		return CategoryInfoResponse{}, err
 	}
 
 	// Specify parameters to send.
@@ -204,7 +204,7 @@ func (w *QueryCategoryinfoClient) Do(ctx context.Context) (QueryCategoryInfoResp
 	}
 
 	// Make the request.
-	r := QueryCategoryInfoResponse{}
+	r := CategoryInfoResponse{}
 	j, err := w.c.GetInto(ctx, parameters, &r)
 	r.RawJSON = j
 	if err != nil {

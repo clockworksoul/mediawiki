@@ -13,37 +13,37 @@ import (
 // * This module requires read rights.
 // * This module can be used as a generator.
 
-type QueryAllpagesResponse struct {
+type AllpagesResponse struct {
 	QueryResponse
-	BatchComplete string                         `json:"batchcomplete"`
-	Continue      *QueryAllpagesResponseContinue `json:"continue,omitempty"`
-	Query         *QueryAllpagesResponseQuery    `json:"query,omitempty"`
+	BatchComplete string                    `json:"batchcomplete"`
+	Continue      *AllpagesResponseContinue `json:"continue,omitempty"`
+	Query         *AllpagesResponseQuery    `json:"query,omitempty"`
 }
 
-type QueryAllpagesResponseContinue struct {
+type AllpagesResponseContinue struct {
 	GapContinue string `json:"gapcontinue"`
 	Continue    string `json:"continue"`
 }
 
-type QueryAllpagesResponseQuery struct {
+type AllpagesResponseQuery struct {
 	Pages map[string]QueryResponseQueryPage `json:"pages"`
 }
 
-// QueryAllpages
-type QueryAllpagesOption func(map[string]string)
+// Allpages
+type AllpagesOption func(map[string]string)
 
-type QueryAllpagesClient struct {
+type AllpagesClient struct {
 	o []QueryOption
 	c *Client
 }
 
-func (c *Client) QueryAllpages() *QueryAllpagesClient {
-	return &QueryAllpagesClient{c: c}
+func (c *Client) Allpages() *AllpagesClient {
+	return &AllpagesClient{c: c}
 }
 
 // Apfrom
 // The page title to start enumerating from.
-func (w *QueryAllpagesClient) From(s string) *QueryAllpagesClient {
+func (w *AllpagesClient) From(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapfrom"] = s
 	})
@@ -52,7 +52,7 @@ func (w *QueryAllpagesClient) From(s string) *QueryAllpagesClient {
 
 // Apcontinue
 // When more results are available, use this to continue.
-func (w *QueryAllpagesClient) Continue(s string) *QueryAllpagesClient {
+func (w *AllpagesClient) Continue(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapcontinue"] = s
 	})
@@ -61,7 +61,7 @@ func (w *QueryAllpagesClient) Continue(s string) *QueryAllpagesClient {
 
 // Apto
 // The page title to stop enumerating at.
-func (w *QueryAllpagesClient) To(s string) *QueryAllpagesClient {
+func (w *AllpagesClient) To(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapto"] = s
 	})
@@ -70,7 +70,7 @@ func (w *QueryAllpagesClient) To(s string) *QueryAllpagesClient {
 
 // Apprefix
 // Search for all page titles that begin with this value.
-func (w *QueryAllpagesClient) Prefix(s string) *QueryAllpagesClient {
+func (w *AllpagesClient) Prefix(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapprefix"] = s
 	})
@@ -81,7 +81,7 @@ func (w *QueryAllpagesClient) Prefix(s string) *QueryAllpagesClient {
 // The namespace to enumerate.
 // One of the following values: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 90, 91, 92, 93, 100, 101, 102, 103, 104, 105, 106, 107, 486, 487, 710, 711, 828, 829, 1198, 1199, 2300, 2301, 2302, 2303, 2600, 5500, 5501
 // Default: 0
-func (w *QueryAllpagesClient) Namespace(i int) *QueryAllpagesClient {
+func (w *AllpagesClient) Namespace(i int) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapnamespace"] = strconv.FormatInt(int64(i), 10)
 	})
@@ -93,7 +93,7 @@ func (w *QueryAllpagesClient) Namespace(i int) *QueryAllpagesClient {
 // Note: Due to miser mode, using this may result in fewer than aplimit results returned before continuing; in extreme cases, zero results may be returned.
 // One of the following values: all, nonredirects, redirects
 // Default: all
-func (w *QueryAllpagesClient) Filterredir(s string) *QueryAllpagesClient {
+func (w *AllpagesClient) Filterredir(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapfilterredir"] = s
 	})
@@ -102,7 +102,7 @@ func (w *QueryAllpagesClient) Filterredir(s string) *QueryAllpagesClient {
 
 // Apminsize
 // Limit to pages with at least this many bytes.
-func (w *QueryAllpagesClient) Minsize(i int) *QueryAllpagesClient {
+func (w *AllpagesClient) Minsize(i int) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapminsize"] = strconv.FormatInt(int64(i), 10)
 	})
@@ -111,7 +111,7 @@ func (w *QueryAllpagesClient) Minsize(i int) *QueryAllpagesClient {
 
 // Apmaxsize
 // Limit to pages with at most this many bytes.
-func (w *QueryAllpagesClient) Maxsize(i int) *QueryAllpagesClient {
+func (w *AllpagesClient) Maxsize(i int) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapmaxsize"] = strconv.FormatInt(int64(i), 10)
 	})
@@ -121,7 +121,7 @@ func (w *QueryAllpagesClient) Maxsize(i int) *QueryAllpagesClient {
 // Apprtype
 // Limit to protected pages only.
 // Values (separate with | or alternative): edit, move, upload
-func (w *QueryAllpagesClient) Prtype(s ...string) *QueryAllpagesClient {
+func (w *AllpagesClient) Prtype(s ...string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapprtype"] = strings.Join(s, "|")
 	})
@@ -131,7 +131,7 @@ func (w *QueryAllpagesClient) Prtype(s ...string) *QueryAllpagesClient {
 // Apprlevel
 // Filter protections based on protection level (must be used with apprtype= parameter).
 // Values (separate with | or alternative): Can be empty, or autoconfirmed, sysop
-func (w *QueryAllpagesClient) Prlevel(s ...string) *QueryAllpagesClient {
+func (w *AllpagesClient) Prlevel(s ...string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapprlevel"] = strings.Join(s, "|")
 	})
@@ -142,7 +142,7 @@ func (w *QueryAllpagesClient) Prlevel(s ...string) *QueryAllpagesClient {
 // Filter protections based on cascadingness (ignored when apprtype isn't set).
 // One of the following values: all, cascading, noncascading
 // Default: all
-func (w *QueryAllpagesClient) Prfiltercascade(s string) *QueryAllpagesClient {
+func (w *AllpagesClient) Prfiltercascade(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapprfiltercascade"] = s
 	})
@@ -153,7 +153,7 @@ func (w *QueryAllpagesClient) Prfiltercascade(s string) *QueryAllpagesClient {
 // How many total pages to return.
 // The value must be between 1 and 500. A value <= 0 indicates a value of "max"
 // Default: 10
-func (w *QueryAllpagesClient) Limit(i int) *QueryAllpagesClient {
+func (w *AllpagesClient) Limit(i int) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		if i <= 0 {
 			m["gaplimit"] = "max"
@@ -168,7 +168,7 @@ func (w *QueryAllpagesClient) Limit(i int) *QueryAllpagesClient {
 // The direction in which to list.
 // One of the following values: ascending, descending
 // Default: ascending
-func (w *QueryAllpagesClient) Dir(s string) *QueryAllpagesClient {
+func (w *AllpagesClient) Dir(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapdir"] = s
 	})
@@ -179,7 +179,7 @@ func (w *QueryAllpagesClient) Dir(s string) *QueryAllpagesClient {
 // Filter based on whether a page has langlinks. Note that this may not consider langlinks added by extensions.
 // One of the following values: all, withlanglinks, withoutlanglinks
 // Default: all
-func (w *QueryAllpagesClient) Filterlanglinks(s string) *QueryAllpagesClient {
+func (w *AllpagesClient) Filterlanglinks(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapfilterlanglinks"] = s
 	})
@@ -193,16 +193,16 @@ func (w *QueryAllpagesClient) Filterlanglinks(s string) *QueryAllpagesClient {
 // all - Get pages with any protections expiry.
 // One of the following values: all, definite, indefinite
 // Default: all
-func (w *QueryAllpagesClient) Prexpiry(s string) *QueryAllpagesClient {
+func (w *AllpagesClient) Prexpiry(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapprexpiry"] = s
 	})
 	return w
 }
 
-func (w *QueryAllpagesClient) Do(ctx context.Context) (QueryAllpagesResponse, error) {
+func (w *AllpagesClient) Do(ctx context.Context) (AllpagesResponse, error) {
 	if err := w.c.checkKeepAlive(ctx); err != nil {
-		return QueryAllpagesResponse{}, err
+		return AllpagesResponse{}, err
 	}
 
 	// Specify parameters to send.
@@ -217,7 +217,7 @@ func (w *QueryAllpagesClient) Do(ctx context.Context) (QueryAllpagesResponse, er
 	}
 
 	// Make the request.
-	r := QueryAllpagesResponse{}
+	r := AllpagesResponse{}
 	j, err := w.c.GetInto(ctx, parameters, &r)
 	r.RawJSON = j
 	if err != nil {

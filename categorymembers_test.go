@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestQueryCategoryMembers(t *testing.T) {
+func TestCategoryMembers(t *testing.T) {
 	ctx := context.Background()
 
 	c, err := New(apiUrl, agent)
@@ -17,7 +17,7 @@ func TestQueryCategoryMembers(t *testing.T) {
 	_, err = c.BotLogin(ctx, username, password)
 	require.NoError(t, err)
 
-	r, err := c.QueryCategoryMembers().
+	r, err := c.CategoryMembers().
 		Title("Category:Automatically converted pages").
 		Limit(2).
 		Do(ctx)

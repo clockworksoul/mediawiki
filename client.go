@@ -25,10 +25,6 @@ type Client struct {
 
 	apiURL *url.URL
 
-	// FailFileExists causes an error to be returned if a file upload gets
-	// a "fileexists-no-change" status.
-	FailFileExists bool
-
 	// HTTP user agent
 	UserAgent string
 

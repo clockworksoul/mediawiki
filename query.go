@@ -5,11 +5,11 @@ import (
 	"time"
 )
 
+// This contains structs that are used as response building blocks for multiple API commands.
+
 type QueryResponse struct {
 	CoreResponse
-	BatchComplete any                            `json:"batchcomplete"`
-	Continue      *QueryAllpagesResponseContinue `json:"continue,omitempty"`
-	Query         *QueryResponseQuery            `json:"query,omitempty"`
+	BatchComplete any `json:"batchcomplete"`
 }
 
 type QueryResponseNormalized struct {
