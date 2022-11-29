@@ -73,21 +73,3 @@ func TestClientParseResponse(t *testing.T) {
 	assert.Equal(t, "anerror", r.Error.Code)
 	assert.Equal(t, "You got an error.", r.Error.Info)
 }
-
-func TestClientProtect(t *testing.T) {
-	c, err := New(apiUrl, agent)
-	require.NoError(t, err)
-
-	_, err = c.BotLogin(context.Background(), username, password)
-	require.NoError(t, err)
-
-	r, err := c.Edit().Title("Protection test").Text("This is a test.").Summary("Automated test.").Do(context.Background())
-	require.NoError(t, err)
-	assert.Nil(t, r.Error)
-	require.NotNil(t, r.Edit)
-	assert.Equal(t, Success, r.Edit.Result)
-
-	r2, err := c.Protect(context.Background(), "Protection test", "This is a test")
-	require.NoError(t, err)
-	assert.Nil(t, r2.Error)
-}

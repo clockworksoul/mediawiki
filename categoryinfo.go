@@ -38,7 +38,7 @@ func (c *Client) CategoryInfo() *CategoryinfoClient {
 	return &CategoryinfoClient{c: c}
 }
 
-// WithQueryProp
+// Prop
 // Which properties to get for the queried pages.
 func (w *CategoryinfoClient) Prop(s ...string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -47,7 +47,7 @@ func (w *CategoryinfoClient) Prop(s ...string) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryList
+// List
 // Which lists to get.
 func (w *CategoryinfoClient) List(s ...string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -56,7 +56,7 @@ func (w *CategoryinfoClient) List(s ...string) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryMeta
+// Meta
 // Which metadata to get.
 func (w *CategoryinfoClient) Meta(s ...string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -65,7 +65,7 @@ func (w *CategoryinfoClient) Meta(s ...string) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryIndexpageids
+// Indexpageids
 // Include an additional pageids section listing all returned page IDs.
 func (w *CategoryinfoClient) Indexpageids(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -74,7 +74,7 @@ func (w *CategoryinfoClient) Indexpageids(b bool) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryExport
+// Export
 // Export the current revisions of all given or generated pages.
 func (w *CategoryinfoClient) Export(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -83,7 +83,7 @@ func (w *CategoryinfoClient) Export(b bool) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryExportnowrap
+// Exportnowrap
 // Return the export XML without wrapping it in an XML result (same format as Special:Export). Can only be used with query+export.
 func (w *CategoryinfoClient) Exportnowrap(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -92,7 +92,7 @@ func (w *CategoryinfoClient) Exportnowrap(b bool) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryExportschema
+// Exportschema
 // Target the given version of the XML dump format when exporting. Can only be used with query+export.
 // One of the following values: 0.10, 0.11
 // Default: 0.10
@@ -103,7 +103,7 @@ func (w *CategoryinfoClient) Exportschema(s string) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryIwurl
+// Iwurl
 // Whether to get the full URL if the title is an interwiki link.
 func (w *CategoryinfoClient) Iwurl(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -112,7 +112,7 @@ func (w *CategoryinfoClient) Iwurl(b bool) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryContinue
+// Continue
 // When more results are available, use this to continue.
 func (w *CategoryinfoClient) Continue(s string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -121,7 +121,7 @@ func (w *CategoryinfoClient) Continue(s string) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryRawcontinue
+// Rawcontinue
 // Return raw query-continue data for continuation.
 func (w *CategoryinfoClient) Rawcontinue(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -130,7 +130,7 @@ func (w *CategoryinfoClient) Rawcontinue(b bool) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryTitles
+// Titles
 // A list of titles to work on.
 // Separate values with | or alternative.
 // Maximum number of values is 50 (500 for clients allowed higher limits).
@@ -141,7 +141,7 @@ func (w *CategoryinfoClient) Titles(s string) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryPageids
+// Pageids
 // A list of page IDs to work on.
 // Separate values with | or alternative.
 // Maximum number of values is 50 (500 for clients allowed higher limits).
@@ -152,7 +152,7 @@ func (w *CategoryinfoClient) Pageids(s string) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryRevids
+// Revids
 // A list of revision IDs to work on.
 // Separate values with | or alternative.
 // Maximum number of values is 50 (500 for clients allowed higher limits).
@@ -163,7 +163,7 @@ func (w *CategoryinfoClient) Revids(s string) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryGenerator
+// Generator
 func (w *CategoryinfoClient) Generator(s string) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["generator"] = s
@@ -171,7 +171,7 @@ func (w *CategoryinfoClient) Generator(s string) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryRedirects
+// Redirects
 // Automatically resolve redirects in query+titles, query+pageids, and query+revids, and in pages returned by query+generator.
 func (w *CategoryinfoClient) Redirects(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -180,7 +180,7 @@ func (w *CategoryinfoClient) Redirects(b bool) *CategoryinfoClient {
 	return w
 }
 
-// WithQueryConverttitles
+// Converttitles
 // Convert titles to other variants if necessary. Only works if the wiki's content language supports variant conversion. Languages that support variant conversion include ban, en, crh, gan, iu, kk, ku, shi, sr, tg, uz and zh.
 func (w *CategoryinfoClient) Converttitles(b bool) *CategoryinfoClient {
 	w.o = append(w.o, func(m map[string]string) {

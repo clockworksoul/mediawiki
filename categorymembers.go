@@ -27,8 +27,6 @@ type CategoryMembersClient struct {
 	c *Client
 }
 
-// WithQueryProp
-// Which properties to get for the queried pages.
 func (c *Client) CategoryMembers() *CategoryMembersClient {
 	return &CategoryMembersClient{c: c}
 }
