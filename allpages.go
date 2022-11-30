@@ -41,7 +41,7 @@ func (c *Client) Allpages() *AllpagesClient {
 	return &AllpagesClient{c: c}
 }
 
-// Apfrom
+// from
 // The page title to start enumerating from.
 func (w *AllpagesClient) From(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -50,7 +50,7 @@ func (w *AllpagesClient) From(s string) *AllpagesClient {
 	return w
 }
 
-// Apcontinue
+// continue
 // When more results are available, use this to continue.
 func (w *AllpagesClient) Continue(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -59,7 +59,7 @@ func (w *AllpagesClient) Continue(s string) *AllpagesClient {
 	return w
 }
 
-// Apto
+// to
 // The page title to stop enumerating at.
 func (w *AllpagesClient) To(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -68,7 +68,7 @@ func (w *AllpagesClient) To(s string) *AllpagesClient {
 	return w
 }
 
-// Apprefix
+// prefix
 // Search for all page titles that begin with this value.
 func (w *AllpagesClient) Prefix(s string) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -77,7 +77,7 @@ func (w *AllpagesClient) Prefix(s string) *AllpagesClient {
 	return w
 }
 
-// Apnamespace
+// namespace
 // The namespace to enumerate.
 // One of the following values: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 90, 91, 92, 93, 100, 101, 102, 103, 104, 105, 106, 107, 486, 487, 710, 711, 828, 829, 1198, 1199, 2300, 2301, 2302, 2303, 2600, 5500, 5501
 // Default: 0
@@ -88,7 +88,7 @@ func (w *AllpagesClient) Namespace(i int) *AllpagesClient {
 	return w
 }
 
-// Apfilterredir
+// filterredir
 // Which pages to list.
 // Note: Due to miser mode, using this may result in fewer than aplimit results returned before continuing; in extreme cases, zero results may be returned.
 // One of the following values: all, nonredirects, redirects
@@ -100,7 +100,7 @@ func (w *AllpagesClient) Filterredir(s string) *AllpagesClient {
 	return w
 }
 
-// Apminsize
+// minsize
 // Limit to pages with at least this many bytes.
 func (w *AllpagesClient) Minsize(i int) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -109,7 +109,7 @@ func (w *AllpagesClient) Minsize(i int) *AllpagesClient {
 	return w
 }
 
-// Apmaxsize
+// maxsize
 // Limit to pages with at most this many bytes.
 func (w *AllpagesClient) Maxsize(i int) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
@@ -118,7 +118,7 @@ func (w *AllpagesClient) Maxsize(i int) *AllpagesClient {
 	return w
 }
 
-// Apprtype
+// prtype
 // Limit to protected pages only.
 // Values (separate with | or alternative): edit, move, upload
 func (w *AllpagesClient) Prtype(s ...string) *AllpagesClient {
@@ -128,7 +128,7 @@ func (w *AllpagesClient) Prtype(s ...string) *AllpagesClient {
 	return w
 }
 
-// Apprlevel
+// prlevel
 // Filter protections based on protection level (must be used with apprtype= parameter).
 // Values (separate with | or alternative): Can be empty, or autoconfirmed, sysop
 func (w *AllpagesClient) Prlevel(s ...string) *AllpagesClient {
@@ -138,7 +138,7 @@ func (w *AllpagesClient) Prlevel(s ...string) *AllpagesClient {
 	return w
 }
 
-// Apprfiltercascade
+// prfiltercascade
 // Filter protections based on cascadingness (ignored when apprtype isn't set).
 // One of the following values: all, cascading, noncascading
 // Default: all
@@ -149,7 +149,7 @@ func (w *AllpagesClient) Prfiltercascade(s string) *AllpagesClient {
 	return w
 }
 
-// Aplimit
+// limit
 // How many total pages to return.
 // The value must be between 1 and 500. A value <= 0 indicates a value of "max"
 // Default: 10
@@ -164,7 +164,7 @@ func (w *AllpagesClient) Limit(i int) *AllpagesClient {
 	return w
 }
 
-// Apdir
+// dir
 // The direction in which to list.
 // One of the following values: ascending, descending
 // Default: ascending
@@ -175,7 +175,7 @@ func (w *AllpagesClient) Dir(s string) *AllpagesClient {
 	return w
 }
 
-// Apfilterlanglinks
+// filterlanglinks
 // Filter based on whether a page has langlinks. Note that this may not consider langlinks added by extensions.
 // One of the following values: all, withlanglinks, withoutlanglinks
 // Default: all
@@ -186,7 +186,7 @@ func (w *AllpagesClient) Filterlanglinks(s string) *AllpagesClient {
 	return w
 }
 
-// Apprexpiry
+// prexpiry
 // Which protection expiry to filter the page on:
 // indefinite - Get only pages with indefinite protection expiry.
 // definite -  Get only pages with a definite (specific) protection expiry.

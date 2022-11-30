@@ -282,6 +282,10 @@ func (w *Client) PostInto(ctx context.Context, v Values, a any) (string, error) 
 // checkKeepAlive checks for the presence of an active session cookie,
 // and attempts to re-initialize the connection if one isn't found.
 func (w *Client) checkKeepAlive(ctx context.Context) error {
+	if w.username == "" && w.password == "" {
+		return nil
+	}
+
 	w.keepAliveMutex.Lock()
 	defer w.keepAliveMutex.Unlock()
 
