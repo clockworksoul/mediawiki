@@ -18,26 +18,34 @@ import (
 
 type AllrevisionsResponse struct {
 	CoreResponse
-	Batchcomplete any `json:"batchcomplete,omitempty"`
-	Continue      *struct {
-		Arvcontinue string `json:"arvcontinue,omitempty"`
-		Continue    string `json:"continue,omitempty"`
-	} `json:"continue,omitempty"`
-	Query *struct {
-		Allrevisions []struct {
-			PageId    int `json:"pageid,omitempty"`
-			Revisions []struct {
-				RevId     int        `json:"revid,omitempty"`
-				ParentId  *int       `json:"parentid,omitempty"`
-				Parsetree string     `json:"parsetree,omitempty"`
-				User      string     `json:"user,omitempty"`
-				Timestamp *time.Time `json:"timestamp,omitempty"`
-				Comment   string     `json:"comment,omitempty"`
-			} `json:"revisions,omitempty"`
-			Namespace int    `json:"ns"`
-			Title     string `json:"title,omitempty"`
-		} `json:"allrevisions,omitempty"`
-	} `json:"query,omitempty"`
+	Batchcomplete any                           `json:"batchcomplete,omitempty"`
+	Continue      *AllrevisionsResponseContinue `json:"continue,omitempty"`
+	Query         *AllrevisionsResponseQuery    `json:"query,omitempty"`
+}
+
+type AllrevisionsResponseContinue struct {
+	Arvcontinue string `json:"arvcontinue,omitempty"`
+	Continue    string `json:"continue,omitempty"`
+}
+
+type AllrevisionsResponseQuery struct {
+	Allrevisions []AllrevisionsResponseQueryRevision `json:"allrevisions,omitempty"`
+}
+
+type AllrevisionsResponseQueryRevision struct {
+	PageId    int                                         `json:"pageid,omitempty"`
+	Revisions []AllrevisionsResponseQueryRevisionRevision `json:"revisions,omitempty"`
+	Namespace int                                         `json:"ns"`
+	Title     string                                      `json:"title,omitempty"`
+}
+
+type AllrevisionsResponseQueryRevisionRevision struct {
+	RevId     int        `json:"revid,omitempty"`
+	ParentId  int        `json:"parentid,omitempty"`
+	Parsetree string     `json:"parsetree,omitempty"`
+	User      string     `json:"user,omitempty"`
+	Timestamp *time.Time `json:"timestamp,omitempty"`
+	Comment   string     `json:"comment,omitempty"`
 }
 
 type AllrevisionsOption func(map[string]string)
@@ -182,7 +190,7 @@ func (w *AllrevisionsClient) Namespace(i ...int) *AllrevisionsClient {
 			}
 		}
 
-		m["ususerids"] = strings.Join(s, "|")
+		m["arvnamespace"] = strings.Join(s, "|")
 	})
 	return w
 }
