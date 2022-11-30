@@ -24,8 +24,33 @@ func TestRevisionsStandard(t *testing.T) {
 	assert.Nil(t, r.Error)
 	require.NotNil(t, r.Query)
 	assert.Len(t, r.Query.Pages, 2)
-	assert.NotEmpty(t, r.Query.Pages[1].Revisions[0].Slots["main"].Content)
 
+	r.Query.Pages[1].Revisions[0].Tags = []string{}
+	CompareJSON(t, r.RawJSON, r, false)
+}
+
+func TestRevisionsOpts(t *testing.T) {
+	c, err := New(apiUrl, agent)
+	require.NoError(t, err)
+
+	_, err = c.BotLogin(context.Background(), username, password)
+	require.NoError(t, err)
+
+	// c.Debug = os.Stdout
+
+	r, err :=
+		c.Revisions().
+			Titles("Main_Page", "Help:Introduction to Yextipedia").
+			Slots("*").
+			Prop("ids", "flags", "timestamp", "user", "userid", "size", "slotsize", "sha1", "slotsha1", "contentmodel", "comment", "content", "roles").
+			Do(context.Background())
+
+	require.NoError(t, err)
+	assert.Nil(t, r.Error)
+	require.NotNil(t, r.Query)
+	assert.Len(t, r.Query.Pages, 2)
+
+	r.Query.Pages[1].Revisions[0].Tags = []string{}
 	CompareJSON(t, r.RawJSON, r, false)
 }
 

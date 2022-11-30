@@ -13,7 +13,7 @@ type QueryResponse struct {
 }
 
 type QueryResponseNormalized struct {
-	Fromencoded bool   `json:"fromencoded"`
+	Fromencoded bool   `json:"fromencoded,omitempty"`
 	From        string `json:"from"`
 	To          string `json:"to"`
 }
@@ -29,7 +29,7 @@ type QueryResponseQueryPage struct {
 	Namespace            int                              `json:"ns"`
 	Title                string                           `json:"title"`
 	Revisions            []QueryResponseQueryPageRevision `json:"revisions,omitempty"`
-	Missing              bool                             `json:"missing,omitempty"`
+	Missing              any                              `json:"missing,omitempty"`
 	CategoryInfo         map[string]int                   `json:"categoryinfo,omitempty"`
 	Contentmodel         string                           `json:"contentmodel,omitempty"`
 	Pagelanguage         string                           `json:"pagelanguage,omitempty"`
@@ -41,7 +41,12 @@ type QueryResponseQueryPage struct {
 }
 
 type QueryResponseQueryPageRevision struct {
-	Slots map[string]QueryResponseQueryPageRevisionSlot `json:"slots"`
+	RevId     int                                           `json:"revid,omitempty"`
+	ParentId  int                                           `json:"parentid"`
+	User      string                                        `json:"user,omitempty"`
+	Timestamp *time.Time                                    `json:"timestamp,omitempty"`
+	Comment   string                                        `json:"comment"`
+	Slots     map[string]QueryResponseQueryPageRevisionSlot `json:"slots,omitempty"`
 }
 
 type QueryResponseQueryPageRevisionSlot struct {
