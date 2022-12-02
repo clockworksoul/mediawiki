@@ -29,6 +29,20 @@ func TestRevisionsStandard(t *testing.T) {
 	CompareJSON(t, r.RawJSON, r, false)
 }
 
+func TestRevisionsContent(t *testing.T) {
+	c, err := New(apiUrl, agent)
+	require.NoError(t, err)
+
+	_, err = c.BotLogin(context.Background(), username, password)
+	require.NoError(t, err)
+
+	r, err := c.Revisions().Titles("Main_Page").Prop("content").Do(context.Background())
+	require.NoError(t, err)
+	assert.Nil(t, r.Error)
+	require.NotNil(t, r.Query)
+	assert.NotEmpty(t, r.Query.Pages[0].Revisions[0].Slots["main"].Content)
+}
+
 func TestRevisionsOpts(t *testing.T) {
 	c, err := New(apiUrl, agent)
 	require.NoError(t, err)

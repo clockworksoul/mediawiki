@@ -30,7 +30,7 @@ type RevisionsResponseQuery struct {
 }
 
 type RevisionsResponseNormalized struct {
-	Fromencoded bool   `json:"fromencoded,omitempty"`
+	Fromencoded bool   `json:"fromencoded"`
 	From        string `json:"from"`
 	To          string `json:"to"`
 }
@@ -46,6 +46,7 @@ type RevisionsResponsePage struct {
 type RevisionsResponseRevision struct {
 	Revid         int                              `json:"revid,omitempty"`
 	Parentid      int                              `json:"parentid"`
+	Minor         bool                             `json:"minor"`
 	User          string                           `json:"user,omitempty"`
 	Userid        int                              `json:"userid,omitempty"`
 	Timestamp     *time.Time                       `json:"timestamp,omitempty"`
@@ -63,7 +64,7 @@ type RevisionsResponseSlot struct {
 	Sha1          string `json:"sha1,omitempty"`
 	Contentmodel  string `json:"contentmodel,omitempty"`
 	Contentformat string `json:"contentformat,omitempty"`
-	Content       string `json:"*,omitempty"`
+	Content       string `json:"content,omitempty"`
 }
 
 type RevisionsClient struct {
@@ -280,8 +281,10 @@ func (w *RevisionsClient) Do(ctx context.Context) (RevisionsResponse, error) {
 
 	// Specify parameters to send.
 	parameters := Values{
-		"action": "query",
-		"prop":   "revisions",
+		"action":        "query",
+		"prop":          "revisions",
+		"formatversion": "2",
+		"rvslots":       "main",
 	}
 
 	for _, o := range w.o {
