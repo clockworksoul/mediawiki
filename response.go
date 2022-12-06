@@ -62,6 +62,7 @@ const (
 
 type ResponseBotLogin struct {
 	Result   Result `json:"result"`
+	Reason   string `json:"reason"`
 	UserId   int    `json:"lguserid"`
 	UserName string `json:"lgusername"`
 }

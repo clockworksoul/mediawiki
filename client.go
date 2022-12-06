@@ -188,7 +188,7 @@ func (w *Client) BotLogin(ctx context.Context, username, password string) (Respo
 	} else if r.BotLogin == nil {
 		return r, fmt.Errorf("unexpected error in login")
 	} else if r.BotLogin.Result != Success {
-		return r, fmt.Errorf("login %s: (%s) %s", r.ClientLogin.Status, r.ClientLogin.MessageCode, r.ClientLogin.Message)
+		return r, fmt.Errorf("login %s: (%s) %s", r.BotLogin.Result, r.BotLogin.Reason)
 	}
 
 	w.lastLoginTime = time.Now()
