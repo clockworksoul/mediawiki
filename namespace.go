@@ -23,49 +23,44 @@ const (
 	NamespaceCategoryTalk  Namespace = 15
 )
 
+var namespaceNames = map[Namespace]string{
+	NamespaceMedia:         "Media",
+	NamespaceSpecial:       "Special",
+	NamespaceMain:          "Main",
+	NamespaceTalk:          "Talk",
+	NamespaceUser:          "User",
+	NamespaceUserTalk:      "User_talk",
+	NamespaceProject:       "Project",
+	NamespaceProjectTalk:   "Project_talk",
+	NamespaceFile:          "File",
+	NamespaceFileTalk:      "File_talk",
+	NamespaceMediaWiki:     "MediaWiki",
+	NamespaceMediaWikiTalk: "MediaWiki_talk",
+	NamespaceTemplate:      "Template",
+	NamespaceTemplateTalk:  "Template_talk",
+	NamespaceHelp:          "Help",
+	NamespaceHelpTalk:      "Help_talk",
+	NamespaceCategory:      "Category",
+	NamespaceCategoryTalk:  "Category_talk",
+}
+
+// NewNamespace is a convenience function that simplifies the definition of
+// named namespaces. Using NewNamespace will add the code and name to the
+// internal lookup table, so that future calls to String() will return the
+// assigned name. Note that this could be used to (accidentally or otherwise)
+// redefine the standard namespace names.
+func NewNamespace(name string, code int) Namespace {
+	ns := Namespace(code)
+	namespaceNames[ns] = name
+	return ns
+}
+
 func (n Namespace) String() string {
-	switch n {
-	case NamespaceMedia:
-		return "Media"
-	case NamespaceSpecial:
-		return "Special"
-	case NamespaceMain:
-		return "Main"
-	case NamespaceTalk:
-		return "Talk"
-	case NamespaceUser:
-		return "User"
-	case NamespaceUserTalk:
-		return "User_talk"
-	case NamespaceProject:
-		return "Project"
-	case NamespaceProjectTalk:
-		return "Project_talk"
-	case NamespaceFile:
-		return "File"
-	case NamespaceFileTalk:
-		return "File_talk"
-	case NamespaceMediaWiki:
-		return "MediaWiki"
-	case NamespaceMediaWikiTalk:
-		return "MediaWiki_talk"
-	case NamespaceTemplate:
-		return "Template"
-	case NamespaceTemplateTalk:
-		return "Template_talk"
-	case NamespaceHelp:
-		return "Help"
-	case NamespaceHelpTalk:
-		return "Help_talk"
-	case NamespaceCategory:
-		return "Category"
-	case NamespaceCategoryTalk:
-		return "Category_talk"
-	default:
-		if n%2 == 0 {
-			return "Custom"
-		} else {
-			return "Custom talk"
-		}
+	if name, ok := namespaceNames[n]; ok {
+		return name
+	} else if n%2 == 0 {
+		return "Custom"
+	} else {
+		return "Custom_talk"
 	}
 }
