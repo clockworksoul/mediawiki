@@ -1,8 +1,12 @@
 package mediawiki
 
-type Namespace int
+type Namespace int64
 
 const (
+	// Namespace all is a special value used to indicate "all namespaces"
+	// for functions like LinkshereClient.Namespace.
+	NamespaceAll Namespace = -1024
+
 	NamespaceMedia         Namespace = -2
 	NamespaceSpecial       Namespace = -1
 	NamespaceMain          Namespace = 0
@@ -24,6 +28,7 @@ const (
 )
 
 var namespaceNames = map[Namespace]string{
+	NamespaceAll:           "*",
 	NamespaceMedia:         "Media",
 	NamespaceSpecial:       "Special",
 	NamespaceMain:          "Main",
