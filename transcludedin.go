@@ -13,48 +13,48 @@ import (
 // Flags:
 // * This module requires read rights.
 
-// Linkshere
+// Transcludedin
 
-type LinkshereResponse struct {
+type TranscludedinResponse struct {
 	CoreResponse
-	BatchComplete any                `json:"batchcomplete,omitempty"`
-	Continue      *LinkshereContinue `json:"continue,omitempty"`
-	Query         *LinkshereQuery    `json:"query,omitempty"`
+	BatchComplete any                    `json:"batchcomplete,omitempty"`
+	Continue      *TranscludedinContinue `json:"continue,omitempty"`
+	Query         *TranscludedinQuery    `json:"query,omitempty"`
 }
 
-type LinkshereContinue struct {
+type TranscludedinContinue struct {
 	Lhcontinue string `json:"lhcontinue"`
 	Continue   string `json:"continue"`
 }
 
-type LinkshereQuery struct {
-	Pages map[string]LinkshereFromPage `json:"pages"`
+type TranscludedinQuery struct {
+	Pages map[string]TranscludedinFromPage `json:"pages"`
 }
 
-type LinkshereFromPage struct {
-	Pageid    int             `json:"pageid"`
-	Ns        Namespace       `json:"ns"`
-	Title     string          `json:"title"`
-	Missing   any             `json:"missing,omitempty"`
-	Linkshere []LinksherePage `json:"linkshere,omitempty"`
+type TranscludedinFromPage struct {
+	Pageid        int                 `json:"pageid"`
+	Ns            Namespace           `json:"ns"`
+	Title         string              `json:"title"`
+	Missing       any                 `json:"missing,omitempty"`
+	Transcludedin []TranscludedinPage `json:"transcludedin,omitempty"`
 }
 
-type LinksherePage struct {
+type TranscludedinPage struct {
 	Pageid   int       `json:"pageid"`
 	Ns       Namespace `json:"ns"`
 	Title    string    `json:"title"`
 	Redirect any       `json:"redirect"`
 }
 
-type LinkshereOption func(map[string]string)
+type TranscludedinOption func(map[string]string)
 
-type LinkshereClient struct {
-	o []LinkshereOption
+type TranscludedinClient struct {
+	o []TranscludedinOption
 	c *Client
 }
 
-func (c *Client) Linkshere() *LinkshereClient {
-	return &LinkshereClient{c: c}
+func (c *Client) Transcludedin() *TranscludedinClient {
+	return &TranscludedinClient{c: c}
 }
 
 // Prop. Which properties to get:
@@ -65,9 +65,9 @@ func (c *Client) Linkshere() *LinkshereClient {
 //
 // Values (separate with | or alternative): pageid, redirect, title
 // Default: pageid|title|redirect
-func (w *LinkshereClient) Prop(s ...string) *LinkshereClient {
+func (w *TranscludedinClient) Prop(s ...string) *TranscludedinClient {
 	w.o = append(w.o, func(m map[string]string) {
-		m["lhprop"] = strings.Join(s, "|")
+		m["tiprop"] = strings.Join(s, "|")
 	})
 	return w
 }
@@ -77,10 +77,10 @@ func (w *LinkshereClient) Prop(s ...string) *LinkshereClient {
 // Values (separate with | or alternative): 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, etc.
 //
 // To specify all values, use NamespaceAll.
-func (w *LinkshereClient) Namespace(ns ...Namespace) *LinkshereClient {
+func (w *TranscludedinClient) Namespace(ns ...Namespace) *TranscludedinClient {
 	w.o = append(w.o, func(m map[string]string) {
 		if len(ns) > 0 && ns[0] == NamespaceAll {
-			m["lhnamespace"] = "*"
+			m["tinamespace"] = "*"
 			return
 		}
 
@@ -88,7 +88,7 @@ func (w *LinkshereClient) Namespace(ns ...Namespace) *LinkshereClient {
 		for _, n := range ns {
 			s = append(s, strconv.FormatInt(int64(n), 10))
 		}
-		m["lhnamespace"] = strings.Join(s, "|")
+		m["tinamespace"] = strings.Join(s, "|")
 	})
 	return w
 
@@ -100,9 +100,9 @@ func (w *LinkshereClient) Namespace(ns ...Namespace) *LinkshereClient {
 // * !redirect - Only show non-redirects.
 //
 // Values (separate with | or alternative): !redirect, redirect
-func (w *LinkshereClient) Show(s ...string) *LinkshereClient {
+func (w *TranscludedinClient) Show(s ...string) *TranscludedinClient {
 	w.o = append(w.o, func(m map[string]string) {
-		m["lhshow"] = strings.Join(s, "|")
+		m["tishow"] = strings.Join(s, "|")
 	})
 	return w
 }
@@ -112,18 +112,18 @@ func (w *LinkshereClient) Show(s ...string) *LinkshereClient {
 // Type: integer
 // The value must be between 1 and 500. For "max", use 0.
 // Default: 10
-func (w *LinkshereClient) Limit(i int) *LinkshereClient {
+func (w *TranscludedinClient) Limit(i int) *TranscludedinClient {
 	w.o = append(w.o, func(m map[string]string) {
-		m["lhlimit"] = strconv.FormatInt(int64(i), 10)
+		m["tilimit"] = strconv.FormatInt(int64(i), 10)
 	})
 	return w
 }
 
 // Continue
 // When more results are available, use this to continue.
-func (w *LinkshereClient) Continue(s string) *LinkshereClient {
+func (w *TranscludedinClient) Continue(s string) *TranscludedinClient {
 	w.o = append(w.o, func(m map[string]string) {
-		m["lhcontinue"] = s
+		m["ticontinue"] = s
 	})
 	return w
 }
@@ -131,22 +131,22 @@ func (w *LinkshereClient) Continue(s string) *LinkshereClient {
 // Titles. A list of titles to work on.
 // Separate values with | or alternative.
 // Maximum number of values is 50 (500 for clients allowed higher limits).
-func (w *LinkshereClient) Titles(s ...string) *LinkshereClient {
+func (w *TranscludedinClient) Titles(s ...string) *TranscludedinClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["titles"] = strings.Join(s, "|")
 	})
 	return w
 }
 
-func (w *LinkshereClient) Do(ctx context.Context) (LinkshereResponse, error) {
+func (w *TranscludedinClient) Do(ctx context.Context) (TranscludedinResponse, error) {
 	if err := w.c.checkKeepAlive(ctx); err != nil {
-		return LinkshereResponse{}, err
+		return TranscludedinResponse{}, err
 	}
 
 	// Specify parameters to send.
 	parameters := Values{
 		"action": "query",
-		"prop":   "linkshere",
+		"prop":   "transcludedin",
 	}
 
 	for _, o := range w.o {
@@ -154,7 +154,7 @@ func (w *LinkshereClient) Do(ctx context.Context) (LinkshereResponse, error) {
 	}
 
 	// Make the request.
-	r := LinkshereResponse{}
+	r := TranscludedinResponse{}
 	j, err := w.c.GetInto(ctx, parameters, &r)
 	r.RawJSON = j
 	if err != nil {
