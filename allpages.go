@@ -81,7 +81,7 @@ func (w *AllpagesClient) Prefix(s string) *AllpagesClient {
 // The namespace to enumerate.
 // One of the following values: 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 90, 91, 92, 93, 100, 101, 102, 103, 104, 105, 106, 107, 486, 487, 710, 711, 828, 829, 1198, 1199, 2300, 2301, 2302, 2303, 2600, 5500, 5501
 // Default: 0
-func (w *AllpagesClient) Namespace(i int) *AllpagesClient {
+func (w *AllpagesClient) Namespace(i Namespace) *AllpagesClient {
 	w.o = append(w.o, func(m map[string]string) {
 		m["gapnamespace"] = strconv.FormatInt(int64(i), 10)
 	})

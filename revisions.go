@@ -36,7 +36,7 @@ type RevisionsResponseNormalized struct {
 }
 
 type RevisionsResponsePage struct {
-	Namespace int                         `json:"ns"`
+	Namespace Namespace                   `json:"ns"`
 	Title     string                      `json:"title,omitempty"`
 	Missing   any                         `json:"missing,omitempty"`
 	Pageid    int                         `json:"pageid,omitempty"`

@@ -26,7 +26,7 @@ type QueryResponseQuery struct {
 
 type QueryResponseQueryPage struct {
 	PageId               int                              `json:"pageid,omitempty"`
-	Namespace            int                              `json:"ns"`
+	Namespace            Namespace                        `json:"ns"`
 	Title                string                           `json:"title"`
 	Revisions            []QueryResponseQueryPageRevision `json:"revisions,omitempty"`
 	Missing              any                              `json:"missing,omitempty"`

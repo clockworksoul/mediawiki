@@ -35,7 +35,7 @@ type AllrevisionsResponseQuery struct {
 type AllrevisionsResponseQueryRevision struct {
 	PageId    int                                         `json:"pageid,omitempty"`
 	Revisions []AllrevisionsResponseQueryRevisionRevision `json:"revisions,omitempty"`
-	Namespace int                                         `json:"ns"`
+	Namespace Namespace                                   `json:"ns"`
 	Title     string                                      `json:"title,omitempty"`
 }
 
@@ -178,7 +178,7 @@ func (w *AllrevisionsClient) User(s string) *AllrevisionsClient {
 // Only list pages in this namespace.
 // Note: Due to miser mode, using this may result in fewer than limit results returned before continuing; in extreme cases, zero results may be returned.
 // To specify all values, use a value of less than 0.
-func (w *AllrevisionsClient) Namespace(i ...int) *AllrevisionsClient {
+func (w *AllrevisionsClient) Namespace(i ...Namespace) *AllrevisionsClient {
 	w.o = append(w.o, func(m map[string]string) {
 		var s []string
 

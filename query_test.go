@@ -30,7 +30,7 @@ func TestResponsePageFullPageName(t *testing.T) {
 func TestResponsePagePageName(t *testing.T) {
 	cc := []struct {
 		Name      string
-		Namespace int
+		Namespace Namespace
 		Expected  string
 	}{
 		{"Main page", NamespaceMain, "Main page"},
@@ -54,7 +54,7 @@ func TestResponsePagePageName(t *testing.T) {
 func TestResponsePageBasePageName(t *testing.T) {
 	cc := []struct {
 		Name      string
-		Namespace int
+		Namespace Namespace
 		Expected  string
 	}{
 		{"Main page", NamespaceMain, "Main page"},
@@ -78,7 +78,7 @@ func TestResponsePageBasePageName(t *testing.T) {
 func TestResponsePageRootPageName(t *testing.T) {
 	cc := []struct {
 		Name      string
-		Namespace int
+		Namespace Namespace
 		Expected  string
 	}{
 		{"Main page", NamespaceMain, "Main page"},
@@ -102,7 +102,7 @@ func TestResponsePageRootPageName(t *testing.T) {
 func TestResponsePageArticlePageName(t *testing.T) {
 	cc := []struct {
 		Name      string
-		Namespace int
+		Namespace Namespace
 		Expected  string
 	}{
 		{"Main page", NamespaceMain, "Main page"},
@@ -127,7 +127,7 @@ func TestResponsePageArticlePageName(t *testing.T) {
 func TestResponsePageTalkPageName(t *testing.T) {
 	cc := []struct {
 		Name      string
-		Namespace int
+		Namespace Namespace
 		Expected  string
 	}{
 		{"Main page", NamespaceMain, "Talk:Main page"},
