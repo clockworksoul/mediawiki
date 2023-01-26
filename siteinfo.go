@@ -54,7 +54,7 @@ type SiteinfoResponseQuery struct {
 	MagicWords        []SiteinfoMagicWords                    `json:"magicwords,omitempty"`
 	InterwikiMap      []SiteinfoInterwikiMap                  `json:"interwikimap,omitempty"`
 	Dbrepllag         []SiteinfoDbrepllag                     `json:"dbrepllag,omitempty"`
-	Statistics        map[string]int                          `json:"statistics,omitempty"`
+	Statistics        *SiteinfoStatistics                     `json:"statistics,omitempty"`
 	Usergroups        []SiteinfoUsergroups                    `json:"usergroups,omitempty"`
 	Libraries         []SiteinfoLibrary                       `json:"libraries,omitempty"`
 	Extensions        []SiteinfoExtension                     `json:"extensions,omitempty"`
@@ -71,6 +71,17 @@ type SiteinfoResponseQuery struct {
 	Protocols         []string                                `json:"protocols,omitempty"`
 	DefaultOptions    map[string]any                          `json:"defaultoptions,omitempty"`
 	UploadDialog      *SiteinfoUploadDialog                   `json:"uploaddialog,omitempty"`
+}
+
+type SiteinfoStatistics struct {
+	Pages       int `json:"pages"`
+	Articles    int `json:"articles"`
+	Edits       int `json:"edits"`
+	Images      int `json:"images"`
+	Users       int `json:"users"`
+	Activeusers int `json:"activeusers"`
+	Admins      int `json:"admins"`
+	Jobs        int `json:"jobs"`
 }
 
 type SiteinfoGeneral struct {
