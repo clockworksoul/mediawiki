@@ -88,7 +88,7 @@ func CompareJSON(t *testing.T, a, b any, verbose bool) bool {
 	require.NotEmpty(t, ja)
 	require.NotEmpty(t, jb)
 
-	if verbose || !assert.JSONEq(t, ja, jb) {
+	if !assert.JSONEq(t, ja, jb) || verbose {
 		buf := &bytes.Buffer{}
 		json.Indent(buf, []byte(ja), "", "  ")
 		t.Log(buf.String())
