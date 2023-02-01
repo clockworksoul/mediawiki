@@ -2,7 +2,6 @@ package mediawiki
 
 import (
 	"context"
-	"os"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -35,11 +34,27 @@ func TestMoveStandard(t *testing.T) {
 
 	c.Edit().Title("Talk:" + name).Text("This is a test.").Summary("Automated test.").Do(ctx)
 
-	c.Debug = os.Stdout
-
 	rp, err := c.Move().From(name).To(name2).Movetalk(true).Noredirect(true).Reason("Because I want to.").Do(ctx)
 	require.NoError(t, err)
 	assert.Nil(t, rp.Error)
+
+	CompareJSON(t, rp.RawJSON, rp, false)
+}
+
+func TestMoveDoesntExist(t *testing.T) {
+	name := "This page doesn't exist"
+	name2 := "This page still doesn't exist"
+
+	ctx := context.Background()
+	c, err := New(apiUrl, agent)
+	require.NoError(t, err)
+
+	_, err = c.BotLogin(ctx, username, password)
+	require.NoError(t, err)
+
+	rp, err := c.Move().From(name).To(name2).Reason("Because I want to.").Do(ctx)
+	require.Error(t, err)
+	require.Contains(t, err.Error(), "missingtitle: ")
 
 	CompareJSON(t, rp.RawJSON, rp, false)
 }
