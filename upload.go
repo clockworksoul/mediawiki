@@ -57,11 +57,14 @@ type UploadUploadWarningsNoChange struct {
 }
 
 type UploadUploadImageinfo struct {
-	Bitdepth       int      `json:"bitdepth,omitempty"`
-	Canonicaltitle string   `json:"canonicaltitle,omitempty"`
-	Comment        string   `json:"comment"`
-	Commonmetadata []string `json:"commonmetadata"`
-	Descriptionurl string   `json:"descriptionurl,omitempty"`
+	Bitdepth       int    `json:"bitdepth,omitempty"`
+	Canonicaltitle string `json:"canonicaltitle,omitempty"`
+	Comment        string `json:"comment"`
+	Commonmetadata []struct {
+		Name  string `json:"name,omitempty"`
+		Value any    `json:"value,omitempty"`
+	} `json:"commonmetadata,omitempty"`
+	Descriptionurl string `json:"descriptionurl,omitempty"`
 	Extmetadata    struct {
 		DateTime *struct {
 			Value  *time.Time `json:"value,omitempty"`
@@ -79,7 +82,7 @@ type UploadUploadImageinfo struct {
 	Mediatype string `json:"mediatype,omitempty"`
 	Metadata  []struct {
 		Name  string `json:"name,omitempty"`
-		Value int    `json:"value,omitempty"`
+		Value any    `json:"value,omitempty"`
 	} `json:"metadata,omitempty"`
 	Mime          string     `json:"mime,omitempty"`
 	Parsedcomment string     `json:"parsedcomment"`
