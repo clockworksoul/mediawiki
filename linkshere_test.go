@@ -35,5 +35,5 @@ func TestLinksHereLimit(t *testing.T) {
 	r, err := c.Linkshere().Limit(1).Titles("Link target").Do(context.Background())
 	require.NoError(t, err)
 
-	CompareJSON(t, r.RawJSON, r, true)
+	CompareJSON(t, r.RawJSON, r, false)
 }
